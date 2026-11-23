@@ -8,8 +8,9 @@
 ---
 
 ## Current Status
-- **Phase:** MVP Complete — ready for dev server testing
-- **Last Updated:** 2026-11-22
+- **Phase:** Published to GitHub & Ready for Deployment
+- **GitHub Repository:** https://github.com/sahilsing2k02/dtu-merch
+- **Last Updated:** 2026-11-23
 
 ---
 
