@@ -2,12 +2,11 @@
 
 export default function AnnouncementTicker() {
   const text =
-    "⚡ DTU BATCH '26 DROP LIVE  •  FREE CAMPUS PICK-UP  •  380 GSM HEAVYWEIGHT COMBED COTTON  •  PAY ON PICKUP  •  LIMITED 250 PIECES  •  ";
+    "DTU OFFICIAL COLLEGIATE DROP  •  350 GSM CREAM & OXBLOOD FLEECE  •  FOR ALL DTUITES  •  FREE CAMPUS PICK-UP  •  PAY ON COLLECTION  •  ";
 
   return (
-    <div className="bg-[#800000] text-white text-xs font-semibold tracking-widest overflow-hidden whitespace-nowrap select-none">
-      <div className="animate-marquee inline-block py-2">
-        {/* Duplicate text for seamless loop */}
+    <div className="bg-[#781215] text-[#FAF6EE] text-[11px] font-medium tracking-[0.22em] uppercase overflow-hidden whitespace-nowrap select-none border-b border-[#5E0D10]">
+      <div className="animate-marquee inline-block py-2.5">
         <span>{text}{text}{text}{text}</span>
       </div>
     </div>

@@ -1,7 +1,7 @@
 "use client";
 
 import { useState } from "react";
-import { X, Minus, Plus, Trash2, MessageCircle } from "lucide-react";
+import { X, Minus, Plus, Trash2, MessageCircle, ShoppingBag } from "lucide-react";
 import { useCart } from "@/store/cart-context";
 import ReservationForm from "./reservation-form";
 
@@ -16,65 +16,125 @@ export default function CartDrawer({ open, onClose }: Props) {
 
   if (!open) return null;
 
-  // shortcut: WhatsApp number is a placeholder, replace with real number before launch
   const WHATSAPP_NUM = "919625609307";
 
   const buildWhatsAppOrder = () => {
     const lines = items.map(
-      (i) => `• ${i.name} (${i.color}, ${i.size}) × ${i.qty} — ₹${(i.price * i.qty).toLocaleString("en-IN")}`
+      (i) =>
+        `• ${i.name} (${i.color}, ${i.size}) × ${i.qty} — ₹${(
+          i.price * i.qty
+        ).toLocaleString("en-IN")}`
     );
-    const msg = `🛒 *DTU Merch Order*\n\n${lines.join("\n")}\n\n*Total: ₹${totalPrice.toLocaleString("en-IN")}*\n\nPlease confirm my reservation!`;
+    const msg = `🛒 *DTU Merch Order*\n\n${lines.join(
+      "\n"
+    )}\n\n*Total: ₹${totalPrice.toLocaleString(
+      "en-IN"
+    )}*\n\nPlease confirm my reservation!`;
     return `https://wa.me/${WHATSAPP_NUM}?text=${encodeURIComponent(msg)}`;
   };
 
   return (
     <>
-      {/* Backdrop */}
-      <div className="fixed inset-0 z-50 bg-black/70 animate-fade-in" onClick={onClose} />
+      <div
+        className="fixed inset-0 z-50 bg-[#1E1614]/55 backdrop-blur-xs animate-fade-in"
+        onClick={onClose}
+      />
 
-      {/* Drawer */}
-      <div className="fixed top-0 right-0 bottom-0 z-50 w-full max-w-md bg-[#0A0A0B] border-l border-[#24242A] animate-slide-in-right flex flex-col">
-        {/* Header */}
-        <div className="flex items-center justify-between px-5 py-4 border-b border-[#24242A]">
-          <h2 className="font-black tracking-tight text-lg">YOUR BAG ({totalItems})</h2>
-          <button onClick={onClose} className="p-1 hover:bg-[#121215] transition-colors" aria-label="Close cart">
-            <X size={20} />
+      <div className="fixed top-0 right-0 bottom-0 z-50 w-full max-w-md bg-[#FAF6EE] border-l border-[#E2D6C3] shadow-2xl animate-slide-in-right flex flex-col">
+        <div className="flex items-center justify-between px-6 py-5 border-b border-[#E2D6C3] bg-white/70">
+          <div className="flex items-center gap-2.5">
+            <ShoppingBag size={18} className="text-[#781215]" />
+            <h2 className="font-serif font-bold text-2xl text-[#1E1614]">
+              Your Bag <span className="text-[#781215]">({totalItems})</span>
+            </h2>
+          </div>
+          <button
+            onClick={onClose}
+            className="p-2 rounded-full hover:bg-[#F3ECE0] text-[#1E1614] transition-colors cursor-pointer"
+            aria-label="Close cart"
+          >
+            <X size={18} />
           </button>
         </div>
 
-        {/* Items */}
-        <div className="flex-1 overflow-y-auto px-5 py-4">
+        <div className="flex-1 overflow-y-auto px-6 py-5">
           {items.length === 0 ? (
-            <div className="text-center py-16">
-              <p className="text-zinc-500 text-sm">Your bag is empty</p>
-              <button onClick={onClose} className="mt-4 text-xs text-[#800000] font-semibold hover:text-[#A3272A] transition-colors">
-                CONTINUE SHOPPING
+            <div className="text-center py-20">
+              <div className="w-14 h-14 mx-auto mb-4 rounded-full bg-[#F3ECE0] border border-[#E2D6C3] flex items-center justify-center text-[#781215]">
+                <ShoppingBag size={22} />
+              </div>
+              <p className="font-serif text-xl font-bold text-[#1E1614] mb-1">
+                Your bag is empty
+              </p>
+              <p className="text-[#6E5D53] text-xs mb-5">
+                Explore the Cream &amp; Oxblood DTU &apos;41 hoodie.
+              </p>
+              <button
+                onClick={onClose}
+                className="px-6 py-2.5 rounded-full bg-[#781215] text-[#FAF6EE] text-xs font-bold tracking-[0.16em] uppercase hover:bg-[#5E0D10] transition-colors cursor-pointer"
+              >
+                Continue Shopping
               </button>
             </div>
           ) : (
-            <div className="space-y-4">
+            <div className="space-y-3.5">
               {items.map((item) => (
-                <div key={`${item.productId}-${item.color}-${item.size}`} className="flex gap-4 bg-[#121215] border border-[#24242A] p-4">
-                  {/* Info */}
+                <div
+                  key={`${item.productId}-${item.color}-${item.size}`}
+                  className="flex gap-4 bg-white rounded-2xl border border-[#E2D6C3] p-4 shadow-xs"
+                >
                   <div className="flex-1 min-w-0">
-                    <h4 className="font-bold text-sm truncate">{item.name}</h4>
-                    <p className="text-zinc-500 text-xs mt-0.5">
-                      {item.color} · {item.size}
+                    <h4 className="font-serif font-bold text-base text-[#1E1614] truncate">
+                      {item.name}
+                    </h4>
+                    <p className="text-[#6E5D53] text-xs mt-0.5">
+                      {item.color} · Size {item.size}
                     </p>
-                    <p className="font-bold text-sm mt-2">₹{(item.price * item.qty).toLocaleString("en-IN")}</p>
+                    <p className="font-bold text-sm text-[#781215] mt-2">
+                      ₹{(item.price * item.qty).toLocaleString("en-IN")}
+                    </p>
                   </div>
 
-                  {/* Qty + Delete */}
-                  <div className="flex flex-col items-end gap-2">
-                    <button onClick={() => removeItem(item.productId, item.color, item.size)} className="text-zinc-600 hover:text-red-500 transition-colors" aria-label="Remove">
+                  <div className="flex flex-col items-end justify-between">
+                    <button
+                      onClick={() =>
+                        removeItem(item.productId, item.color, item.size)
+                      }
+                      className="text-[#9B8B7E] hover:text-[#781215] transition-colors cursor-pointer p-1"
+                      aria-label="Remove"
+                    >
                       <Trash2 size={14} />
                     </button>
-                    <div className="flex items-center border border-[#24242A]">
-                      <button onClick={() => updateQty(item.productId, item.color, item.size, item.qty - 1)} className="p-1.5 hover:bg-[#24242A] transition-colors" aria-label="Decrease">
+                    <div className="flex items-center border border-[#E2D6C3] rounded-full bg-[#FAF6EE]">
+                      <button
+                        onClick={() =>
+                          updateQty(
+                            item.productId,
+                            item.color,
+                            item.size,
+                            item.qty - 1
+                          )
+                        }
+                        className="p-1.5 hover:text-[#781215] transition-colors cursor-pointer"
+                        aria-label="Decrease"
+                      >
                         <Minus size={12} />
                       </button>
-                      <span className="px-3 text-xs font-bold">{item.qty}</span>
-                      <button onClick={() => updateQty(item.productId, item.color, item.size, item.qty + 1)} className="p-1.5 hover:bg-[#24242A] transition-colors" aria-label="Increase">
+                      <span className="px-2.5 text-xs font-bold text-[#1E1614]">
+                        {item.qty}
+                      </span>
+                      <button
+                        onClick={() =>
+                          updateQty(
+                            item.productId,
+                            item.color,
+                            item.size,
+                            item.qty + 1
+                          )
+                        }
+                        className="p-1.5 hover:text-[#781215] transition-colors cursor-pointer"
+                        aria-label="Increase"
+                      >
                         <Plus size={12} />
                       </button>
                     </div>
@@ -85,36 +145,40 @@ export default function CartDrawer({ open, onClose }: Props) {
           )}
         </div>
 
-        {/* Footer */}
         {items.length > 0 && (
-          <div className="border-t border-[#24242A] px-5 py-4 space-y-3">
-            <div className="flex items-center justify-between mb-1">
-              <span className="text-sm text-zinc-400">Subtotal</span>
-              <span className="text-lg font-black">₹{totalPrice.toLocaleString("en-IN")}</span>
+          <div className="border-t border-[#E2D6C3] bg-white px-6 py-5 space-y-3">
+            <div className="flex items-center justify-between">
+              <span className="text-xs font-bold tracking-[0.16em] uppercase text-[#6E5D53]">
+                Subtotal
+              </span>
+              <span className="font-serif text-2xl font-bold text-[#1E1614]">
+                ₹{totalPrice.toLocaleString("en-IN")}
+              </span>
             </div>
-            <p className="text-[10px] text-zinc-600 tracking-wider">PAY ON CAMPUS PICK-UP • NO ONLINE PAYMENT REQUIRED</p>
+            <p className="text-[10px] text-[#6E5D53] tracking-[0.14em] uppercase">
+              Pay on campus pick-up • No online payment required
+            </p>
 
             <button
               onClick={() => setShowForm(true)}
-              className="w-full py-3.5 bg-white text-black font-bold text-sm tracking-wider hover:bg-zinc-200 transition-colors"
+              className="w-full py-3.5 rounded-full bg-[#781215] text-[#FAF6EE] font-bold text-xs tracking-[0.18em] uppercase hover:bg-[#5E0D10] transition-colors cursor-pointer shadow-md shadow-[#781215]/15"
             >
-              RESERVE FOR PICK-UP
+              Reserve for Pick-up
             </button>
 
             <a
               href={buildWhatsAppOrder()}
               target="_blank"
               rel="noopener noreferrer"
-              className="w-full py-3 border border-[#25D366] text-[#25D366] font-bold text-sm tracking-wider flex items-center justify-center gap-2 hover:bg-[#25D366]/10 transition-colors"
+              className="w-full py-3 rounded-full border border-[#1E8E4E] text-[#1E8E4E] font-bold text-xs tracking-[0.16em] uppercase flex items-center justify-center gap-2 hover:bg-[#1E8E4E]/10 transition-colors"
             >
-              <MessageCircle size={16} />
-              ORDER VIA WHATSAPP
+              <MessageCircle size={15} />
+              Order via WhatsApp
             </a>
           </div>
         )}
       </div>
 
-      {/* Reservation form modal */}
       {showForm && <ReservationForm onClose={() => setShowForm(false)} />}
     </>
   );

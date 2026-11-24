@@ -1,16 +1,24 @@
 import type { Metadata } from "next";
-import { Inter } from "next/font/google";
+import { DM_Sans, Cormorant_Garamond } from "next/font/google";
 import "./globals.css";
 
-const inter = Inter({
+const dmSans = DM_Sans({
   subsets: ["latin"],
-  variable: "--font-inter",
+  variable: "--font-sans",
+  weight: ["400", "500", "600", "700"],
+});
+
+const cormorant = Cormorant_Garamond({
+  subsets: ["latin"],
+  variable: "--font-serif",
+  weight: ["500", "600", "700"],
+  style: ["normal", "italic"],
 });
 
 export const metadata: Metadata = {
-  title: "DTU Merch — Official Campus Streetwear",
+  title: "DTU Merch — Official Collegiate Hoodie",
   description:
-    "Premium heavyweight hoodies for Delhi Technological University students. Campus pick-up only. Pay on collection.",
+    "350 GSM heavyweight cream & oxblood collegiate hoodie for all Delhi Technological University students and alumni. Campus pick-up only.",
 };
 
 export default function RootLayout({
@@ -19,8 +27,10 @@ export default function RootLayout({
   children: React.ReactNode;
 }) {
   return (
-    <html lang="en" className="dark">
-      <body className={`${inter.variable} font-sans antialiased bg-[#0A0A0B] text-white`}>
+    <html lang="en" className="scroll-smooth">
+      <body
+        className={`${dmSans.variable} ${cormorant.variable} font-sans antialiased bg-[#FAF6EE] text-[#1E1614] selection:bg-[#781215] selection:text-[#FAF6EE]`}
+      >
         {children}
       </body>
     </html>

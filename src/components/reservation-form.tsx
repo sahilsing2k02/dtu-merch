@@ -22,11 +22,11 @@ export default function ReservationForm({ onClose }: Props) {
     pickup: PICKUP_POINTS[0],
   });
 
-  const set = (key: string, val: string) => setForm((p) => ({ ...p, [key]: val }));
+  const set = (key: string, val: string) =>
+    setForm((p) => ({ ...p, [key]: val }));
 
   const handleSubmit = (e: FormEvent) => {
     e.preventDefault();
-    // Generate pseudo-unique reservation ID
     const id = `DTU-${Math.floor(1000 + Math.random() * 9000)}`;
     setReservationId(id);
     setSubmitted(true);
@@ -37,131 +37,183 @@ export default function ReservationForm({ onClose }: Props) {
     onClose();
   };
 
+  const inputClass =
+    "w-full bg-[#FAF6EE] border border-[#E2D6C3] rounded-xl px-3.5 py-2.5 text-sm text-[#1E1614] placeholder:text-[#A49486] focus:border-[#781215] focus:bg-white outline-none transition-colors";
+
   return (
     <>
-      <div className="fixed inset-0 z-[60] bg-black/70" onClick={onClose} />
-      <div className="fixed z-[60] inset-4 md:inset-x-auto md:inset-y-8 md:max-w-lg md:mx-auto bg-[#121215] border border-[#24242A] overflow-y-auto animate-scale-up">
-        <div className="flex items-center justify-between px-5 py-4 border-b border-[#24242A]">
-          <h3 className="font-black tracking-tight">{submitted ? "Reservation Confirmed" : "Campus Pick-up Reservation"}</h3>
-          <button onClick={onClose} className="p-1 hover:bg-[#24242A] transition-colors" aria-label="Close">
+      <div
+        className="fixed inset-0 z-[60] bg-[#1E1614]/60 backdrop-blur-xs animate-fade-in"
+        onClick={onClose}
+      />
+      <div className="fixed z-[60] inset-4 md:inset-x-auto md:inset-y-8 md:max-w-lg md:mx-auto bg-white border border-[#E2D6C3] rounded-3xl shadow-2xl overflow-y-auto animate-scale-up">
+        <div className="flex items-center justify-between px-6 py-4 border-b border-[#E2D6C3] bg-[#FAF6EE]">
+          <h3 className="font-serif font-bold text-lg text-[#1E1614]">
+            {submitted ? "Reservation Confirmed" : "Campus Pick-up Reservation"}
+          </h3>
+          <button
+            onClick={onClose}
+            className="p-1.5 rounded-full hover:bg-[#EAE0D0] text-[#1E1614] transition-colors cursor-pointer"
+            aria-label="Close"
+          >
             <X size={18} />
           </button>
         </div>
 
         {submitted ? (
-          /* Confirmation */
           <div className="p-6 text-center">
-            <CheckCircle size={48} className="mx-auto text-green-500 mb-4" />
-            <p className="text-xs text-zinc-500 tracking-widest mb-1">RESERVATION ID</p>
-            <p className="text-3xl font-black mb-6">{reservationId}</p>
+            <CheckCircle size={48} className="mx-auto text-emerald-700 mb-3" />
+            <p className="text-[10px] font-bold text-[#6E5D53] tracking-[0.22em] uppercase mb-1">
+              Reservation ID
+            </p>
+            <p className="font-serif text-3xl font-black text-[#781215] mb-6">
+              {reservationId}
+            </p>
 
-            <div className="text-left bg-[#0A0A0B] border border-[#24242A] p-4 mb-4 text-sm space-y-1">
-              <p><span className="text-zinc-500">Name:</span> {form.name}</p>
-              <p><span className="text-zinc-500">Roll No:</span> {form.rollNo}</p>
-              <p><span className="text-zinc-500">Branch:</span> {form.branch}</p>
-              <p><span className="text-zinc-500">Pick-up:</span> {form.pickup}</p>
+            <div className="text-left bg-[#FAF6EE] border border-[#E2D6C3] rounded-2xl p-4 mb-4 text-sm space-y-1.5">
+              <p>
+                <span className="text-[#6E5D53]">Name:</span>{" "}
+                <strong className="text-[#1E1614]">{form.name}</strong>
+              </p>
+              <p>
+                <span className="text-[#6E5D53]">Roll No:</span>{" "}
+                <strong className="text-[#1E1614]">{form.rollNo}</strong>
+              </p>
+              <p>
+                <span className="text-[#6E5D53]">Branch:</span>{" "}
+                <strong className="text-[#1E1614]">{form.branch}</strong>
+              </p>
+              <p>
+                <span className="text-[#6E5D53]">Pick-up:</span>{" "}
+                <strong className="text-[#1E1614]">{form.pickup}</strong>
+              </p>
             </div>
 
-            <div className="text-left bg-[#0A0A0B] border border-[#24242A] p-4 mb-4 text-sm space-y-1">
+            <div className="text-left bg-[#FAF6EE] border border-[#E2D6C3] rounded-2xl p-4 mb-4 text-sm space-y-1.5">
               {items.map((i) => (
-                <p key={`${i.productId}-${i.color}-${i.size}`}>
-                  {i.name} ({i.color}, {i.size}) × {i.qty} — ₹{(i.price * i.qty).toLocaleString("en-IN")}
+                <p
+                  key={`${i.productId}-${i.color}-${i.size}`}
+                  className="text-[#1E1614]"
+                >
+                  {i.name} ({i.color}, {i.size}) × {i.qty} —{" "}
+                  <strong>₹{(i.price * i.qty).toLocaleString("en-IN")}</strong>
                 </p>
               ))}
-              <p className="font-bold pt-2 border-t border-[#24242A]">Total: ₹{totalPrice.toLocaleString("en-IN")}</p>
+              <p className="font-extrabold text-[#781215] pt-2 border-t border-[#E2D6C3]">
+                Total: ₹{totalPrice.toLocaleString("en-IN")}
+              </p>
             </div>
 
-            <div className="bg-[#800000]/10 border border-[#800000]/30 p-3 text-xs text-zinc-400 mb-6">
-              <strong className="text-white">Pick-up Instructions:</strong> Bring your DTU Student ID card to <strong className="text-white">{form.pickup}</strong>. Pay via UPI or Cash on collection.
+            <div className="bg-[#781215]/8 border border-[#781215]/25 rounded-2xl p-3.5 text-xs text-[#6E5D53] mb-6">
+              <strong className="text-[#781215]">Pick-up Instructions:</strong>{" "}
+              Bring your DTU Student ID card to{" "}
+              <strong className="text-[#1E1614]">{form.pickup}</strong>. Pay via
+              UPI or Cash on collection.
             </div>
 
             <button
               onClick={handleDone}
-              className="w-full py-3.5 bg-white text-black font-bold text-sm tracking-wider hover:bg-zinc-200 transition-colors"
+              className="w-full py-3.5 rounded-full bg-[#781215] text-[#FAF6EE] font-bold text-xs tracking-[0.18em] uppercase hover:bg-[#5E0D10] transition-colors cursor-pointer"
             >
-              DONE
+              Done
             </button>
           </div>
         ) : (
-          /* Form */
-          <form onSubmit={handleSubmit} className="p-5 space-y-4">
-            <p className="text-xs text-zinc-500 mb-2">Campus pick-up only. No online payment required — pay via UPI or Cash on collection.</p>
+          <form onSubmit={handleSubmit} className="p-6 space-y-4">
+            <p className="text-xs text-[#6E5D53] leading-relaxed">
+              Campus pick-up only. No online payment required — pay via UPI or
+              Cash on collection.
+            </p>
 
             <div>
-              <label className="text-xs text-zinc-500 tracking-wider block mb-1">FULL NAME *</label>
+              <label className="text-[11px] font-bold text-[#6E5D53] tracking-[0.14em] uppercase block mb-1.5">
+                Full Name *
+              </label>
               <input
                 required
                 value={form.name}
                 onChange={(e) => set("name", e.target.value)}
-                className="w-full bg-[#0A0A0B] border border-[#24242A] px-3 py-2.5 text-sm focus:border-[#800000] outline-none transition-colors"
+                className={inputClass}
                 placeholder="Rahul Sharma"
               />
             </div>
 
             <div>
-              <label className="text-xs text-zinc-500 tracking-wider block mb-1">WHATSAPP PHONE NUMBER *</label>
+              <label className="text-[11px] font-bold text-[#6E5D53] tracking-[0.14em] uppercase block mb-1.5">
+                WhatsApp Phone Number *
+              </label>
               <input
                 required
                 type="tel"
                 value={form.phone}
                 onChange={(e) => set("phone", e.target.value)}
-                className="w-full bg-[#0A0A0B] border border-[#24242A] px-3 py-2.5 text-sm focus:border-[#800000] outline-none transition-colors"
+                className={inputClass}
                 placeholder="+91 98765 43210"
               />
             </div>
 
             <div className="grid grid-cols-2 gap-3">
               <div>
-                <label className="text-xs text-zinc-500 tracking-wider block mb-1">DTU ROLL NO. *</label>
+                <label className="text-[11px] font-bold text-[#6E5D53] tracking-[0.14em] uppercase block mb-1.5">
+                  DTU Roll No. *
+                </label>
                 <input
                   required
                   value={form.rollNo}
                   onChange={(e) => set("rollNo", e.target.value)}
-                  className="w-full bg-[#0A0A0B] border border-[#24242A] px-3 py-2.5 text-sm focus:border-[#800000] outline-none transition-colors"
+                  className={inputClass}
                   placeholder="2K23/CO/123"
                 />
               </div>
               <div>
-                <label className="text-xs text-zinc-500 tracking-wider block mb-1">BRANCH & YEAR *</label>
+                <label className="text-[11px] font-bold text-[#6E5D53] tracking-[0.14em] uppercase block mb-1.5">
+                  Branch &amp; Year *
+                </label>
                 <input
                   required
                   value={form.branch}
                   onChange={(e) => set("branch", e.target.value)}
-                  className="w-full bg-[#0A0A0B] border border-[#24242A] px-3 py-2.5 text-sm focus:border-[#800000] outline-none transition-colors"
+                  className={inputClass}
                   placeholder="COE 3rd Year"
                 />
               </div>
             </div>
 
             <div>
-              <label className="text-xs text-zinc-500 tracking-wider block mb-1">CAMPUS PICK-UP POINT *</label>
+              <label className="text-[11px] font-bold text-[#6E5D53] tracking-[0.14em] uppercase block mb-1.5">
+                Campus Pick-up Point *
+              </label>
               <select
                 required
                 value={form.pickup}
                 onChange={(e) => set("pickup", e.target.value)}
-                className="w-full bg-[#0A0A0B] border border-[#24242A] px-3 py-2.5 text-sm focus:border-[#800000] outline-none transition-colors"
+                className={inputClass}
               >
                 {PICKUP_POINTS.map((p) => (
-                  <option key={p} value={p}>{p}</option>
+                  <option key={p} value={p}>
+                    {p}
+                  </option>
                 ))}
               </select>
             </div>
 
             {/* Summary */}
-            <div className="bg-[#0A0A0B] border border-[#24242A] p-3 text-xs space-y-1 text-zinc-400">
+            <div className="bg-[#FAF6EE] border border-[#E2D6C3] rounded-2xl p-3.5 text-xs space-y-1 text-[#6E5D53]">
               {items.map((i) => (
                 <p key={`${i.productId}-${i.color}-${i.size}`}>
                   {i.name} ({i.size}) × {i.qty}
                 </p>
               ))}
-              <p className="font-bold text-white pt-1 border-t border-[#24242A]">Total: ₹{totalPrice.toLocaleString("en-IN")}</p>
+              <p className="font-extrabold text-[#1E1614] pt-1.5 border-t border-[#E2D6C3]">
+                Total: ₹{totalPrice.toLocaleString("en-IN")}
+              </p>
             </div>
 
             <button
               type="submit"
-              className="w-full py-3.5 bg-[#800000] text-white font-bold text-sm tracking-wider hover:bg-[#A3272A] transition-colors"
+              className="w-full py-3.5 rounded-full bg-[#781215] text-[#FAF6EE] font-bold text-xs tracking-[0.18em] uppercase hover:bg-[#5E0D10] transition-colors cursor-pointer shadow-md shadow-[#781215]/15"
             >
-              CONFIRM RESERVATION (PAY ON PICK-UP)
+              Confirm Reservation (Pay on Pick-up)
             </button>
           </form>
         )}

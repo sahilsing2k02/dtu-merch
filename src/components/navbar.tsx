@@ -6,43 +6,58 @@ import { useCart } from "@/store/cart-context";
 
 interface NavbarProps {
   onCartOpen: () => void;
+  onSizeGuideOpen?: () => void;
 }
 
-export default function Navbar({ onCartOpen }: NavbarProps) {
+export default function Navbar({ onCartOpen, onSizeGuideOpen }: NavbarProps) {
   const { totalItems } = useCart();
   const [menuOpen, setMenuOpen] = useState(false);
 
-  const links = ["Collection", "About", "Size Guide"];
-
   return (
-    <header className="sticky top-0 z-40 bg-[#0A0A0B]/90 backdrop-blur-md border-b border-[#24242A]">
-      <div className="max-w-7xl mx-auto flex items-center justify-between px-4 h-16">
-        {/* Logo */}
-        <a href="#" className="flex items-center gap-2">
-          <span className="text-xl font-extrabold tracking-tighter">
-            DTU<span className="text-[#800000]">MERCH</span>
-          </span>
+    <header className="sticky top-0 z-40 bg-[#FAF6EE]/90 backdrop-blur-md border-b border-[#E2D6C3]">
+      <div className="max-w-7xl mx-auto flex items-center justify-between px-5 md:px-8 h-18">
+        {/* Crest / Logo */}
+        <a href="#" className="flex items-center gap-3 group">
+          <div className="w-9 h-9 rounded-full bg-[#781215] text-[#F7F1E8] flex items-center justify-center font-serif font-bold text-sm tracking-tight shadow-sm group-hover:bg-[#5E0D10] transition-colors">
+            D
+          </div>
+          <div className="flex flex-col leading-none">
+            <span className="font-serif text-lg font-extrabold tracking-tight text-[#1E1614]">
+              DTU <span className="text-[#781215]">MERCH</span>
+            </span>
+            <span className="text-[9px] tracking-[0.28em] text-[#6E5D53] font-semibold uppercase mt-0.5">
+              Delhi Technological University
+            </span>
+          </div>
         </a>
 
         {/* Desktop nav */}
-        <nav className="hidden md:flex items-center gap-8 text-sm text-zinc-400">
-          {links.map((l) => (
-            <a key={l} href={`#${l.toLowerCase().replace(/ /g, "-")}`} className="hover:text-white transition-colors">
-              {l}
-            </a>
-          ))}
+        <nav className="hidden md:flex items-center gap-9 text-xs font-semibold tracking-[0.16em] uppercase text-[#6E5D53]">
+          <a href="#collection" className="hover:text-[#781215] transition-colors">
+            Collection
+          </a>
+          <a href="#about" className="hover:text-[#781215] transition-colors">
+            Heritage
+          </a>
+          <button
+            onClick={onSizeGuideOpen}
+            className="hover:text-[#781215] transition-colors uppercase cursor-pointer"
+          >
+            Size Guide
+          </button>
         </nav>
 
         {/* Right actions */}
-        <div className="flex items-center gap-4">
+        <div className="flex items-center gap-3">
           <button
             onClick={onCartOpen}
-            className="relative p-2 hover:bg-[#121215] rounded-lg transition-colors"
-            aria-label="Open cart"
+            className="relative flex items-center gap-2 px-4 py-2 rounded-full bg-white hover:bg-[#FAF6EE] border border-[#E2D6C3] text-[#1E1614] transition-all cursor-pointer"
+            aria-label="Open bag"
           >
-            <ShoppingBag size={20} />
+            <ShoppingBag size={16} className="text-[#781215]" />
+            <span className="text-xs font-semibold tracking-wider hidden sm:inline">BAG</span>
             {totalItems > 0 && (
-              <span className="absolute -top-1 -right-1 bg-[#800000] text-[10px] font-bold w-5 h-5 rounded-full flex items-center justify-center">
+              <span className="bg-[#781215] text-[#F7F1E8] text-[10px] font-bold min-w-5 h-5 px-1.5 rounded-full flex items-center justify-center">
                 {totalItems}
               </span>
             )}
@@ -50,7 +65,7 @@ export default function Navbar({ onCartOpen }: NavbarProps) {
 
           {/* Mobile menu toggle */}
           <button
-            className="md:hidden p-2 hover:bg-[#121215] rounded-lg transition-colors"
+            className="md:hidden p-2 rounded-full hover:bg-white/60 text-[#1E1614] transition-colors"
             onClick={() => setMenuOpen(!menuOpen)}
             aria-label="Toggle menu"
           >
@@ -61,17 +76,30 @@ export default function Navbar({ onCartOpen }: NavbarProps) {
 
       {/* Mobile drawer */}
       {menuOpen && (
-        <nav className="md:hidden border-t border-[#24242A] bg-[#0A0A0B] animate-fade-in">
-          {links.map((l) => (
-            <a
-              key={l}
-              href={`#${l.toLowerCase().replace(/ /g, "-")}`}
-              onClick={() => setMenuOpen(false)}
-              className="block px-6 py-3 text-sm text-zinc-400 hover:text-white hover:bg-[#121215] transition-colors"
-            >
-              {l}
-            </a>
-          ))}
+        <nav className="md:hidden border-t border-[#E2D6C3] bg-[#F7F1E8] animate-fade-in px-5 py-3 space-y-1">
+          <a
+            href="#collection"
+            onClick={() => setMenuOpen(false)}
+            className="block py-2.5 text-xs font-semibold tracking-[0.16em] uppercase text-[#6E5D53] hover:text-[#781215] transition-colors"
+          >
+            Collection
+          </a>
+          <a
+            href="#about"
+            onClick={() => setMenuOpen(false)}
+            className="block py-2.5 text-xs font-semibold tracking-[0.16em] uppercase text-[#6E5D53] hover:text-[#781215] transition-colors"
+          >
+            Heritage
+          </a>
+          <button
+            onClick={() => {
+              setMenuOpen(false);
+              onSizeGuideOpen?.();
+            }}
+            className="block w-full text-left py-2.5 text-xs font-semibold tracking-[0.16em] uppercase text-[#6E5D53] hover:text-[#781215] transition-colors"
+          >
+            Size Guide
+          </button>
         </nav>
       )}
     </header>
