@@ -226,7 +226,7 @@ function StorePage() {
         : detail.colourwayLabel;
 
       const chosenSize = detail.size || "L";
-      const itemPrice = detail.price || 999;
+      const itemPrice = detail.price || 1499;
 
       addItem({
         productId: detail.sku || "heritage-1941",
@@ -282,10 +282,10 @@ function StorePage() {
           ref={(node) => {
             hoodieRef.current = node;
           }}
-          price="999"
+          price="1499"
           currency="INR"
         />
-        <Script src="/js/dtu-hoodie.js?v=37" strategy="afterInteractive" />
+        <Script src="/js/dtu-hoodie.js?v=38" strategy="afterInteractive" />
       </section>
 
       {/* Heritage / About section */}

@@ -41,7 +41,7 @@ export const products: HoodieProduct[] = [
     name: "DTU '41 Varsity Stripe Hoodie",
     subtitle:
       "Off-white 400 GSM fleece with oxblood sleeve stripes, varsity chest typography & DelTech back seal",
-    price: 999,
+    price: 1499,
     originalPrice: 1499,
     specs: ["400 GSM FLEECE", "OXBLOOD STRIPE", "PUFF & CREST PRINT"],
     image: "/images/dtu-cream-hoodie.jpg",

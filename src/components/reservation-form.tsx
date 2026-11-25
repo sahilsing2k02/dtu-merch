@@ -243,7 +243,7 @@ export default function ReservationForm({ onClose, discountedTotal, discountAmou
               ))}
               <p className="font-extrabold text-[#1E1614] pt-1.5 border-t border-[#E2D6C3] flex items-center justify-between">
                 <span>Total:</span>
-                <span>₹{effectiveTotal.toLocaleString("en-IN")}{appliedCoupon && <span className="text-xs text-emerald-700 ml-1.5 font-normal">({appliedCoupon} -33%)</span>}</span>
+                <span>₹{effectiveTotal.toLocaleString("en-IN")}{appliedCoupon && <span className="text-xs text-emerald-700 ml-1.5 font-normal">({appliedCoupon} applied)</span>}</span>
               </p>
             </div>
 

@@ -35,10 +35,10 @@ export default function PromoBanner() {
           {/* Left: Offer Headline */}
           <div className="text-center md:text-left">
             <p className="font-serif text-3xl sm:text-4xl font-bold tracking-tight text-[#781215] leading-none">
-              Get 33% Off
+              Get it for ₹1,200
             </p>
             <p className="text-[#1E1614] text-base sm:text-lg font-semibold mt-1.5">
-              For First 50 Orders*
+              MRP <span className="line-through opacity-65">₹1,499</span> • Pre-applied at checkout
             </p>
           </div>
 

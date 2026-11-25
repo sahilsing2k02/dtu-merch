@@ -14,10 +14,10 @@ interface Props {
 export default function CartDrawer({ open, onClose }: Props) {
   const { items, updateQty, removeItem, totalItems, totalPrice } = useCart();
   const [showForm, setShowForm] = useState(false);
-  const [couponCode, setCouponCode] = useState("");
-  const [appliedCode, setAppliedCode] = useState("");
-  const [discountPercent, setDiscountPercent] = useState(0);
-  const [couponMsg, setCouponMsg] = useState("");
+  const [couponCode, setCouponCode] = useState("DTU33");
+  const [appliedCode, setAppliedCode] = useState("DTU33");
+  const [discountApplied, setDiscountApplied] = useState(true);
+  const [couponMsg, setCouponMsg] = useState("✓ DTU33 pre-applied! Special price: ₹1,200");
 
   if (!open) return null;
 
@@ -28,16 +28,16 @@ export default function CartDrawer({ open, onClose }: Props) {
     const normalized = couponCode.trim().toUpperCase();
     if (normalized === "DTU33" || normalized === "DTU10") {
       setAppliedCode(normalized);
-      setDiscountPercent(33);
-      setCouponMsg(`✓ ${normalized} applied! 33% off`);
+      setDiscountApplied(true);
+      setCouponMsg(`✓ ${normalized} applied! Special price: ₹1,200`);
     } else {
       setAppliedCode("");
-      setDiscountPercent(0);
+      setDiscountApplied(false);
       setCouponMsg("Invalid code. Try 'DTU33'");
     }
   };
 
-  const discountAmount = discountPercent > 0 ? Math.round((totalPrice * discountPercent) / 100) : 0;
+  const discountAmount = discountApplied ? Math.min(totalPrice, totalItems * 299) : 0;
   const finalPrice = Math.max(0, totalPrice - discountAmount);
 
   const buildWhatsAppOrder = () => {
@@ -47,7 +47,7 @@ export default function CartDrawer({ open, onClose }: Props) {
           i.price * i.qty
         ).toLocaleString("en-IN")}`
     );
-    const couponLine = discountPercent > 0 ? `\n🏷️ *Coupon ${appliedCode} applied (-33%): -₹${discountAmount.toLocaleString("en-IN")}*` : "";
+    const couponLine = discountApplied ? `\n🏷️ *Coupon ${appliedCode} applied: -₹${discountAmount.toLocaleString("en-IN")}*` : "";
     const msg = `🛒 *DTU Merch Order*\n\n${lines.join(
       "\n"
     )}${couponLine}\n\n*Final Total: ₹${finalPrice.toLocaleString(
@@ -187,19 +187,19 @@ export default function CartDrawer({ open, onClose }: Props) {
               </button>
             </form>
             {couponMsg && (
-              <p className={`text-[11px] font-semibold ${discountPercent > 0 ? "text-emerald-700" : "text-[#781215]"}`}>
+              <p className={`text-[11px] font-semibold ${discountApplied ? "text-emerald-700" : "text-[#781215]"}`}>
                 {couponMsg}
               </p>
             )}
 
             <div className="space-y-1.5 pt-1">
               <div className="flex items-center justify-between text-xs text-[#6E5D53]">
-                <span className="font-semibold uppercase tracking-[0.14em]">Subtotal</span>
+                <span className="font-semibold uppercase tracking-[0.14em]">Subtotal (MRP)</span>
                 <span>₹{totalPrice.toLocaleString("en-IN")}</span>
               </div>
-              {discountPercent > 0 && (
+              {discountApplied && (
                 <div className="flex items-center justify-between text-xs text-emerald-700 font-semibold">
-                  <span>Coupon Discount (33%)</span>
+                  <span>Coupon Discount ({appliedCode})</span>
                   <span>-₹{discountAmount.toLocaleString("en-IN")}</span>
                 </div>
               )}
@@ -233,7 +233,7 @@ export default function CartDrawer({ open, onClose }: Props) {
                   subject: `💬 WhatsApp Order Initiated (₹${finalPrice.toLocaleString("en-IN")})`,
                   data: {
                     Event: "Order via WhatsApp Clicked",
-                    Coupon_Applied: discountPercent > 0 ? appliedCode : "None",
+                    Coupon_Applied: discountApplied ? appliedCode : "None",
                     Items: items.map((i) => `${i.name} (${i.color}, ${i.size}) x${i.qty} - ₹${i.price * i.qty}`).join(" | "),
                     Total_Amount: `₹${finalPrice.toLocaleString("en-IN")}`,
                   },
@@ -252,7 +252,7 @@ export default function CartDrawer({ open, onClose }: Props) {
         <ReservationForm
           discountedTotal={finalPrice}
           discountAmount={discountAmount}
-          appliedCoupon={discountPercent > 0 ? appliedCode : undefined}
+          appliedCoupon={discountApplied ? appliedCode : undefined}
           onClose={() => {
             setShowForm(false);
             onClose();
