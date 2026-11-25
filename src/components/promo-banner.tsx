@@ -5,7 +5,7 @@ import { Check, Copy, Percent } from "lucide-react";
 
 export default function PromoBanner() {
   const [copied, setCopied] = useState(false);
-  const code = "DTU10";
+  const code = "DTU33";
 
   const handleCopy = async () => {
     try {
@@ -35,7 +35,7 @@ export default function PromoBanner() {
           {/* Left: Offer Headline */}
           <div className="text-center md:text-left">
             <p className="font-serif text-3xl sm:text-4xl font-bold tracking-tight text-[#781215] leading-none">
-              Get 10% Off
+              Get 33% Off
             </p>
             <p className="text-[#1E1614] text-base sm:text-lg font-semibold mt-1.5">
               For First 50 Orders*

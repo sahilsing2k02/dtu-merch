@@ -195,7 +195,7 @@ function StorePage() {
           price="999"
           currency="INR"
         />
-        <Script src="/js/dtu-hoodie.js?v=29" strategy="afterInteractive" />
+        <Script src="/js/dtu-hoodie.js?v=30" strategy="afterInteractive" />
       </section>
 
       {/* Heritage / About section */}

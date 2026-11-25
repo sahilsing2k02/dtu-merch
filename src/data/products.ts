@@ -40,15 +40,15 @@ export const products: HoodieProduct[] = [
     id: "heritage-1941",
     name: "DTU '41 Varsity Stripe Hoodie",
     subtitle:
-      "Warm cream 400 GSM fleece with oxblood sleeve stripes, varsity chest typography & DelTech back seal",
+      "Off-white 400 GSM fleece with oxblood sleeve stripes, varsity chest typography & DelTech back seal",
     price: 999,
-    originalPrice: 1999,
+    originalPrice: 1499,
     specs: ["400 GSM FLEECE", "OXBLOOD STRIPE", "PUFF & CREST PRINT"],
     image: "/images/dtu-cream-hoodie.jpg",
     colors: [
       {
-        name: "Ivory Cream / Oxblood",
-        hex: "#F4E5CE",
+        name: "Off White / Oxblood",
+        hex: "#F5F2EB",
         stripeHex: "#781215",
         frontGradient: "from-[#F7EBDC] via-[#F2E2CC] to-[#E9D5BA]",
         backGradient: "from-[#F2E2CC] via-[#EBD9C1] to-[#E2CCB0]",

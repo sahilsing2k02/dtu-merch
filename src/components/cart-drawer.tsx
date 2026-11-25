@@ -14,6 +14,7 @@ export default function CartDrawer({ open, onClose }: Props) {
   const { items, updateQty, removeItem, totalItems, totalPrice } = useCart();
   const [showForm, setShowForm] = useState(false);
   const [couponCode, setCouponCode] = useState("");
+  const [appliedCode, setAppliedCode] = useState("");
   const [discountPercent, setDiscountPercent] = useState(0);
   const [couponMsg, setCouponMsg] = useState("");
 
@@ -23,12 +24,15 @@ export default function CartDrawer({ open, onClose }: Props) {
 
   const handleApplyCoupon = (e: React.FormEvent) => {
     e.preventDefault();
-    if (couponCode.trim().toUpperCase() === "DTU10") {
-      setDiscountPercent(10);
-      setCouponMsg("✓ DTU10 applied! 10% off");
+    const normalized = couponCode.trim().toUpperCase();
+    if (normalized === "DTU33" || normalized === "DTU10") {
+      setAppliedCode(normalized);
+      setDiscountPercent(33);
+      setCouponMsg(`✓ ${normalized} applied! 33% off`);
     } else {
+      setAppliedCode("");
       setDiscountPercent(0);
-      setCouponMsg("Invalid code. Try 'DTU10'");
+      setCouponMsg("Invalid code. Try 'DTU33'");
     }
   };
 
@@ -42,7 +46,7 @@ export default function CartDrawer({ open, onClose }: Props) {
           i.price * i.qty
         ).toLocaleString("en-IN")}`
     );
-    const couponLine = discountPercent > 0 ? `\n🏷️ *Coupon DTU10 applied (-10%): -₹${discountAmount.toLocaleString("en-IN")}*` : "";
+    const couponLine = discountPercent > 0 ? `\n🏷️ *Coupon ${appliedCode} applied (-33%): -₹${discountAmount.toLocaleString("en-IN")}*` : "";
     const msg = `🛒 *DTU Merch Order*\n\n${lines.join(
       "\n"
     )}${couponLine}\n\n*Final Total: ₹${finalPrice.toLocaleString(
@@ -85,7 +89,7 @@ export default function CartDrawer({ open, onClose }: Props) {
                 Your bag is empty
               </p>
               <p className="text-[#6E5D53] text-xs mb-5">
-                Explore the Cream &amp; Oxblood DTU &apos;41 hoodie.
+                Explore the Off-White &amp; Oxblood DTU &apos;41 hoodie.
               </p>
               <button
                 onClick={onClose}
@@ -171,7 +175,7 @@ export default function CartDrawer({ open, onClose }: Props) {
                 type="text"
                 value={couponCode}
                 onChange={(e) => setCouponCode(e.target.value)}
-                placeholder="Coupon code (e.g. DTU10)"
+                placeholder="Coupon code (e.g. DTU33)"
                 className="flex-1 bg-[#FAF6EE] border border-[#E2D6C3] rounded-xl px-3 py-1.5 text-xs text-[#1E1614] uppercase tracking-wider placeholder:normal-case placeholder:text-[#A49486] focus:border-[#781215] outline-none"
               />
               <button
@@ -194,7 +198,7 @@ export default function CartDrawer({ open, onClose }: Props) {
               </div>
               {discountPercent > 0 && (
                 <div className="flex items-center justify-between text-xs text-emerald-700 font-semibold">
-                  <span>Coupon Discount (10%)</span>
+                  <span>Coupon Discount (33%)</span>
                   <span>-₹{discountAmount.toLocaleString("en-IN")}</span>
                 </div>
               )}
@@ -235,7 +239,7 @@ export default function CartDrawer({ open, onClose }: Props) {
       {showForm && (
         <ReservationForm
           discountedTotal={finalPrice}
-          appliedCoupon={discountPercent > 0 ? "DTU10" : undefined}
+          appliedCoupon={discountPercent > 0 ? appliedCode : undefined}
           onClose={() => {
             setShowForm(false);
             onClose();
