@@ -136,7 +136,7 @@ function StorePage() {
         : detail.colourwayLabel;
 
       const chosenSize = detail.size || "L";
-      const itemPrice = detail.price || 1499;
+      const itemPrice = detail.price || 999;
 
       addItem({
         productId: detail.sku || "heritage-1941",
@@ -192,10 +192,10 @@ function StorePage() {
           ref={(node) => {
             hoodieRef.current = node;
           }}
-          price="1499"
+          price="999"
           currency="INR"
         />
-        <Script src="/js/dtu-hoodie.js?v=28" strategy="afterInteractive" />
+        <Script src="/js/dtu-hoodie.js?v=29" strategy="afterInteractive" />
       </section>
 
       {/* Heritage / About section */}
@@ -215,14 +215,14 @@ function StorePage() {
             <p className="text-[#6E5D53] text-sm md:text-base leading-relaxed">
               We&apos;re a student-run collective bringing quiet-luxury
               collegiate streetwear to Delhi Technological University. Our
-              signature hoodie is cut from 350 GSM heavyweight combed cotton
+              signature hoodie is cut from 400 GSM heavyweight combed cotton
               with custom oxblood varsity stripes and high-density crest prints
               built to outlast your semesters.
             </p>
           </div>
           <div className="grid grid-cols-2 gap-4">
             {[
-              { num: "350", label: "GSM Fleece Weight" },
+              { num: "400", label: "GSM Fleece Weight" },
               { num: "ALL", label: "DTU Students & Alumni" },
               { num: "AB4", label: "Campus Pick-up Point" },
               { num: "₹0", label: "Delivery Charges" },

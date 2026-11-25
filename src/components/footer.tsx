@@ -21,7 +21,7 @@ export default function Footer({ onSizeGuideOpen }: FooterProps) {
               </h3>
             </div>
             <p className="text-[#6E5D53] text-sm leading-relaxed max-w-xs">
-              350 GSM heavyweight collegiate apparel for everyone at Delhi
+              400 GSM heavyweight collegiate apparel for everyone at Delhi
               Technological University. Made by DTUites, for all DTUites.
             </p>
           </div>

@@ -18,7 +18,7 @@ const cormorant = Cormorant_Garamond({
 export const metadata: Metadata = {
   title: "DTU Merch — Official Collegiate Hoodie",
   description:
-    "350 GSM heavyweight cream & oxblood collegiate hoodie for all Delhi Technological University students and alumni. Campus pick-up only.",
+    "400 GSM heavyweight cream & oxblood collegiate hoodie for all Delhi Technological University students and alumni. Campus pick-up only.",
   icons: {
     icon: "/images/dtu-logo.jpg",
     apple: "/images/dtu-logo.jpg",
