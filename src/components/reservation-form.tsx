@@ -9,10 +9,11 @@ import { sendEmailNotification } from "@/utils/notify";
 interface Props {
   onClose: () => void;
   discountedTotal?: number;
+  discountAmount?: number;
   appliedCoupon?: string;
 }
 
-export default function ReservationForm({ onClose, discountedTotal, appliedCoupon }: Props) {
+export default function ReservationForm({ onClose, discountedTotal, discountAmount = 0, appliedCoupon }: Props) {
   const { items, totalPrice, clearCart } = useCart();
   const effectiveTotal = typeof discountedTotal === "number" ? discountedTotal : totalPrice;
   const [submitted, setSubmitted] = useState(false);
@@ -47,6 +48,8 @@ export default function ReservationForm({ onClose, discountedTotal, appliedCoupo
         Branch_and_Year: form.branch,
         Pickup_Point: form.pickup,
         Coupon_Applied: appliedCoupon || "None",
+        Subtotal: `₹${totalPrice.toLocaleString("en-IN")}`,
+        Discount: discountAmount > 0 ? `-₹${discountAmount.toLocaleString("en-IN")}` : "₹0",
         Items_Ordered: items.map((i) => `${i.name} (${i.color}, ${i.size}) x${i.qty} - ₹${i.price * i.qty}`).join(" | "),
         Total_Amount: `₹${effectiveTotal.toLocaleString("en-IN")}`,
         Payment_Method: "Pay on Campus Pickup (Cash/UPI)",

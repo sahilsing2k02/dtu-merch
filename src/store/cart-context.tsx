@@ -1,5 +1,6 @@
 "use client";
 import { createContext, useContext, useState, useEffect, useCallback, type ReactNode } from "react";
+import { products } from "@/data/products";
 
 export interface CartItem {
   productId: string;
@@ -30,7 +31,13 @@ export function CartProvider({ children }: { children: ReactNode }) {
     try {
       const saved = localStorage.getItem("dtu_cart_items");
       if (saved) {
-        setItems(JSON.parse(saved));
+        const parsed = JSON.parse(saved) as CartItem[];
+        // Sync unit prices with current catalog so stale cached prices (e.g. 1499) don't skew totals
+        const synced = parsed.map((item) => {
+          const match = products.find((p) => p.id === item.productId);
+          return match ? { ...item, price: match.price } : item;
+        });
+        setItems(synced);
       }
     } catch (e) {
       console.warn("Failed to load saved cart", e);

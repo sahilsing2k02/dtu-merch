@@ -37,8 +37,8 @@ export default function CartDrawer({ open, onClose }: Props) {
     }
   };
 
-  const discountAmount = Math.round((totalPrice * discountPercent) / 100);
-  const finalPrice = totalPrice - discountAmount;
+  const discountAmount = discountPercent > 0 ? Math.round((totalPrice * discountPercent) / 100) : 0;
+  const finalPrice = Math.max(0, totalPrice - discountAmount);
 
   const buildWhatsAppOrder = () => {
     const lines = items.map(
@@ -251,6 +251,7 @@ export default function CartDrawer({ open, onClose }: Props) {
       {showForm && (
         <ReservationForm
           discountedTotal={finalPrice}
+          discountAmount={discountAmount}
           appliedCoupon={discountPercent > 0 ? appliedCode : undefined}
           onClose={() => {
             setShowForm(false);
