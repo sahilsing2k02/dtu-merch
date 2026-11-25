@@ -99,6 +99,21 @@ function StorePage() {
           box-shadow: 0 4px 16px rgba(42,23,20,.05) !important;
           max-width: 30rem !important;
         }
+        .chapter {
+          min-height: auto !important;
+          min-height: 0 !important;
+          justify-content: flex-start !important;
+          gap: 1.25rem !important;
+          padding-block: 1rem 1.25rem !important;
+        }
+        .chapter + .chapter {
+          border-top: 1px solid #E2D6C3 !important;
+          padding-top: 1.25rem !important;
+          margin-top: 0.5rem !important;
+        }
+        .chapter.last {
+          display: none !important;
+        }
         @media (max-width: 820px) {
           .viewer {
             background: #FAF6EE !important;
@@ -179,7 +194,7 @@ function StorePage() {
           price="1499"
           currency="INR"
         />
-        <Script src="/js/dtu-hoodie.js?v=26" strategy="afterInteractive" />
+        <Script src="/js/dtu-hoodie.js?v=27" strategy="afterInteractive" />
       </section>
 
       {/* Heritage / About section */}

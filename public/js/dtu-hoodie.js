@@ -29,8 +29,8 @@ h2, h3, p, ul, dl, dd, fieldset, legend, table { margin: 0; padding: 0; border: 
 
 /* panel */
 .panel { min-width: 0; display: flex; flex-direction: column; }
-.chapter { scroll-margin-top: var(--dtu-top, 0px); min-height: 100vh; min-height: 100svh; display: flex; flex-direction: column; justify-content: center; gap: 1.75rem; padding-block: 4rem 7rem; }
-.chapter.last { min-height: 92svh; }
+.chapter { scroll-margin-top: var(--dtu-top, 0px); min-height: 0; display: flex; flex-direction: column; justify-content: flex-start; gap: 1.25rem; padding-block: 1.5rem 1.75rem; }
+.chapter + .chapter { border-top: 1px solid var(--line); padding-top: 1.75rem; }
 h2, h3 { font-family: var(--serif); font-weight: 600; letter-spacing: -.012em; text-wrap: balance; overflow-wrap: break-word; min-width: 0; }
 h2 { font-size: clamp(2.4rem, 4.1vw, 3.75rem); line-height: 1.04; }
 h3 { font-size: clamp(1.8rem, 2.7vw, 2.5rem); line-height: 1.12; }
@@ -4508,16 +4508,6 @@ transformed.y += uHoodBounce * 0.35;`)};for(let M of[-1,1]){let p=new At(new Ms(
             <select id="bt" name="batch">${du.map(i=>`<option ${i===Rl?"selected":""}>${i}</option>`).join("")}</select></div>
         </div>
       </div>
-    </section>
-    <section class="chapter last">
-      <h3>Built like a varsity classic</h3>
-      <ul class="spec">
-        <li><b>Fit</b><span>Relaxed, with a drop shoulder</span></li>
-        <li><b>Fabric</b><span>Heavyweight brushed fleece, hood lined to match</span></li>
-        <li><b>Sleeves</b><span>One continuous stripe, neckline to cuff, edged with piping</span></li>
-        <li><b>Print</b><span>Matte screen print, front and back</span></li>
-        <li><b>Finish</b><span>Ribbed cuffs and hem, kangaroo pocket, round drawstrings, woven DTU label</span></li>
-      </ul>
     </section>
     <div class="buy">
       <div><p class="price"></p><p class="sum"></p></div>
