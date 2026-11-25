@@ -8,9 +8,10 @@
 ---
 
 ## Current Status
-- **Phase:** Published to GitHub & Ready for Deployment
+- **Phase:** Live with 3D Hoodie Viewer, Automated Gmail Alerts & Refined UI
 - **GitHub Repository:** https://github.com/sahilsing2k02/dtu-merch
-- **Last Updated:** 2026-11-23
+- **Target Notification Email:** merchdtudce@gmail.com
+- **Last Updated:** 2026-11-25
 
 ---
 

@@ -8,7 +8,7 @@ interface Props {
   productName?: string;
 }
 
-export default function WhatsAppButton({ productName }: Props) {
+export default function WhatsAppButton({ productName }: Props) { 
   const query = productName
     ? `Hey DTU Merch team, I have a query about the ${productName}`
     : "Hey DTU Merch team, I have a query about the DTU '41 hoodie!";
