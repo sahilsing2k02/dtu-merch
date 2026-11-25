@@ -89,7 +89,7 @@ export default function CartDrawer({ open, onClose }: Props) {
                 Your bag is empty
               </p>
               <p className="text-[#6E5D53] text-xs mb-5">
-                Explore the Off-White &amp; Oxblood DTU &apos;41 hoodie.
+                Explore the Off-White DTU &apos;41 hoodie.
               </p>
               <button
                 onClick={onClose}

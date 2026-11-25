@@ -21,9 +21,9 @@ export default function Navbar({ onCartOpen, onSizeGuideOpen }: NavbarProps) {
           <img
             src="/images/dtu-logo.jpg"
             alt="DTU Hoodies Logo"
-            className="w-10 h-10 rounded-xl object-cover border border-[#E2D6C3] shadow-xs group-hover:scale-105 transition-transform"
+            className="w-12 h-12 rounded-xl object-cover border border-[#E2D6C3] shadow-xs group-hover:scale-105 transition-transform"
           />
-          <span className="font-serif text-lg font-extrabold tracking-tight text-[#1E1614]">
+          <span className="font-serif text-xl font-extrabold tracking-tight text-[#1E1614]">
             DTU <span className="text-[#781215]">MERCH</span>
           </span>
         </a>

@@ -47,7 +47,7 @@ export const products: HoodieProduct[] = [
     image: "/images/dtu-cream-hoodie.jpg",
     colors: [
       {
-        name: "Off White / Oxblood",
+        name: "Off White",
         hex: "#F5F2EB",
         stripeHex: "#781215",
         frontGradient: "from-[#F7EBDC] via-[#F2E2CC] to-[#E9D5BA]",
