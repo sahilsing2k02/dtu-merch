@@ -8,7 +8,8 @@
 ---
 
 ## Current Status
-- **Phase:** Live with 3D Hoodie Viewer, Automated Gmail Alerts & Refined UI
+- **Phase:** Live in Production on Vercel & GitHub
+- **Live Website URL:** https://dtu-merch.vercel.app
 - **GitHub Repository:** https://github.com/sahilsing2k02/dtu-merch
 - **Target Notification Email:** merchdtudce@gmail.com
 - **Last Updated:** 2026-11-25
