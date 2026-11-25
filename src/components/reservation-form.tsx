@@ -1,7 +1,7 @@
 "use client";
 
 import { useState, type FormEvent } from "react";
-import { X, CheckCircle } from "lucide-react";
+import { X, CheckCircle, MessageCircle } from "lucide-react";
 import { useCart } from "@/store/cart-context";
 import { PICKUP_POINTS } from "@/data/products";
 import { sendEmailNotification } from "@/utils/notify";
@@ -128,12 +128,22 @@ export default function ReservationForm({ onClose, discountedTotal, appliedCoupo
               </p>
             </div>
 
-            <div className="bg-[#781215]/8 border border-[#781215]/25 rounded-2xl p-3.5 text-xs text-[#6E5D53] mb-6">
+            <div className="bg-[#781215]/8 border border-[#781215]/25 rounded-2xl p-3.5 text-xs text-[#6E5D53] mb-4">
               <strong className="text-[#781215]">Pick-up Instructions:</strong>{" "}
               Bring your DTU Student ID card to{" "}
               <strong className="text-[#1E1614]">{form.pickup}</strong>. Pay via
               UPI or Cash on collection.
             </div>
+
+            <a
+              href="https://chat.whatsapp.com/Iv0HUZkZ8g41tZSnylZmcW"
+              target="_blank"
+              rel="noopener noreferrer"
+              className="w-full py-3.5 rounded-full bg-[#1E8E4E] hover:bg-[#17733E] text-white font-bold text-xs tracking-[0.16em] uppercase flex items-center justify-center gap-2 transition-colors mb-3 shadow-md shadow-[#1E8E4E]/20"
+            >
+              <MessageCircle size={16} />
+              Join DTU Merch WhatsApp Group
+            </a>
 
             <button
               onClick={handleDone}
