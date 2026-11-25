@@ -23,14 +23,9 @@ export default function Navbar({ onCartOpen, onSizeGuideOpen }: NavbarProps) {
             alt="DTU Hoodies Logo"
             className="w-10 h-10 rounded-xl object-cover border border-[#E2D6C3] shadow-xs group-hover:scale-105 transition-transform"
           />
-          <div className="flex flex-col leading-none">
-            <span className="font-serif text-lg font-extrabold tracking-tight text-[#1E1614]">
-              DTU <span className="text-[#781215]">MERCH</span>
-            </span>
-            <span className="text-[9px] tracking-[0.28em] text-[#6E5D53] font-semibold uppercase mt-0.5">
-              Delhi Technological University
-            </span>
-          </div>
+          <span className="font-serif text-lg font-extrabold tracking-tight text-[#1E1614]">
+            DTU <span className="text-[#781215]">MERCH</span>
+          </span>
         </a>
 
         {/* Desktop nav */}

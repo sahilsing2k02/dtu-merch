@@ -49,6 +49,55 @@ function StorePage() {
         .buy {
           background: #FAF6EE !important;
         }
+        .name-trigger-wrap {
+          margin-top: -0.85rem !important;
+        }
+        .btn-name-box {
+          display: inline-flex !important;
+          align-items: center !important;
+          gap: .75rem !important;
+          padding: .65rem .95rem !important;
+          background: #FFFFFF !important;
+          border: 1.5px solid #E2D6C3 !important;
+          border-radius: 6px !important;
+          color: #1E1614 !important;
+          font-size: .9375rem !important;
+          font-weight: 550 !important;
+          cursor: pointer !important;
+          transition: all .15s ease !important;
+          box-shadow: 0 1px 3px rgba(42,23,20,.04) !important;
+        }
+        .btn-name-box:hover {
+          border-color: #781215 !important;
+          background: #F7E4D0 !important;
+          color: #781215 !important;
+        }
+        .btn-name-box .sq-box {
+          display: inline-grid !important;
+          place-items: center !important;
+          width: 1.5rem !important;
+          height: 1.5rem !important;
+          border: 1.5px solid #E2D6C3 !important;
+          border-radius: 4px !important;
+          background: #FAF6EE !important;
+          color: #1E1614 !important;
+          flex-shrink: 0 !important;
+        }
+        .btn-name-box:hover .sq-box {
+          border-color: #781215 !important;
+          background: #781215 !important;
+          color: #FFFFFF !important;
+        }
+        .put-name-card {
+          display: grid !important;
+          gap: 1.25rem !important;
+          padding: 1.5rem !important;
+          background: #FFFFFF !important;
+          border: 1.5px solid #E2D6C3 !important;
+          border-radius: 6px !important;
+          box-shadow: 0 4px 16px rgba(42,23,20,.05) !important;
+          max-width: 30rem !important;
+        }
         @media (max-width: 820px) {
           .viewer {
             background: #FAF6EE !important;
@@ -110,7 +159,7 @@ function StorePage() {
           price="1499"
           currency="INR"
         />
-        <Script src="/js/dtu-hoodie.js?v=24" strategy="afterInteractive" />
+        <Script src="/js/dtu-hoodie.js?v=25" strategy="afterInteractive" />
       </section>
 
       {/* Heritage / About section */}

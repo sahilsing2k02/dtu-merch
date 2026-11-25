@@ -50,6 +50,13 @@ input[type=radio] { position: absolute; inset: 0; opacity: 0; width: 100%; heigh
 label:has(input[type=radio]:focus-visible) { outline: 2px solid var(--maroon); outline-offset: 3px; }
 .need .sizes label { border-color: var(--maroon); }
 
+.name-trigger-wrap { margin-top: -0.85rem; }
+.btn-name-box { display: inline-flex; align-items: center; gap: .75rem; padding: .65rem .95rem; background: var(--paper); border: 1.5px solid var(--line); border-radius: var(--r); color: var(--ink); font-size: .9375rem; font-weight: 550; cursor: pointer; transition: all .15s ease; box-shadow: 0 1px 3px rgba(42,23,20,.04); }
+.btn-name-box:hover { border-color: var(--maroon); background: var(--cream); color: var(--maroon); }
+.btn-name-box .sq-box { display: inline-grid; place-items: center; width: 1.5rem; height: 1.5rem; border: 1.5px solid var(--line); border-radius: 4px; background: var(--taupe); color: var(--ink); flex-shrink: 0; }
+.btn-name-box:hover .sq-box { border-color: var(--maroon); background: var(--maroon); color: var(--cream); }
+.put-name-card { display: grid; gap: 1.25rem; padding: 1.5rem; background: var(--paper); border: 1.5px solid var(--line); border-radius: var(--r); box-shadow: 0 4px 16px rgba(42,23,20,.05); max-width: 30rem; }
+
 .field { display: grid; gap: .5rem; }
 .field input, .field select { width: 100%; min-height: 3.25rem; padding: 0 1rem; border: 1px solid var(--line); border-radius: var(--r); background: var(--paper); font-size: 1.0625rem; }
 .field input::placeholder { color: #7d675a; }
@@ -4489,15 +4496,17 @@ transformed.y += uHoodBounce * 0.35;`)};for(let M of[-1,1]){let p=new At(new Ms(
       <fieldset class="size"><div class="row"><legend>Size</legend><button type="button" class="link" data-guide>Size guide</button></div>
         <div class="sizes">${Cl.map(i=>`<label><input type="radio" name="size" value="${i}">${i}</label>`).join("")}</div>
       </fieldset>
-      <p><button type="button" class="link" data-name>Add your name and batch to the back</button></p>
+      <div class="name-trigger-wrap"><button type="button" class="btn-name-box" data-name><span class="sq-box"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"/><path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"/></svg></span><span>Add your name and batch to the back</span></button></div>
     </section>
     <section class="chapter">
-      <div><h3>Put your name under the seal</h3><p class="lede">Optional. It prints on the back exactly as you see it here.</p></div>
-      <div class="fields">
-        <div class="field"><div class="row" style="margin:0"><label class="lab" for="nm">Name</label><span class="val" id="ct">0 of ${Ja}</span></div>
-          <input id="nm" name="name" type="text" maxlength="${Ja}" autocomplete="off" autocapitalize="characters" spellcheck="false" placeholder="e.g. Suhrit Ghimire" aria-describedby="ct"></div>
-        <div class="field"><label class="lab" for="bt">Batch</label>
-          <select id="bt" name="batch">${du.map(i=>`<option ${i===Rl?"selected":""}>${i}</option>`).join("")}</select></div>
+      <div class="put-name-card">
+        <div><h3>Put your name under the seal</h3><p class="lede">Optional. It prints on the back exactly as you see it here.</p></div>
+        <div class="fields">
+          <div class="field"><div class="row" style="margin:0"><label class="lab" for="nm">Name</label><span class="val" id="ct">0 of ${Ja}</span></div>
+            <input id="nm" name="name" type="text" maxlength="${Ja}" autocomplete="off" autocapitalize="characters" spellcheck="false" placeholder="e.g. Suhrit Ghimire" aria-describedby="ct"></div>
+          <div class="field"><label class="lab" for="bt">Batch</label>
+            <select id="bt" name="batch">${du.map(i=>`<option ${i===Rl?"selected":""}>${i}</option>`).join("")}</select></div>
+        </div>
       </div>
     </section>
     <section class="chapter last">
