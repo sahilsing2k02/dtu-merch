@@ -48,14 +48,23 @@ function StorePage() {
           background: #FAF6EE !important;
         }
         .buy {
+          position: static !important;
           background: #FAF6EE !important;
-          margin-top: 1rem !important;
+          margin-top: 0.75rem !important;
         }
         @media (min-width: 821px) {
           .panel {
             align-self: center !important;
             padding-block: 1.5rem !important;
             max-width: 34rem !important;
+          }
+        }
+        @media (max-width: 480px) {
+          .put-name-card .fields {
+            grid-template-columns: 1fr !important;
+          }
+          .dtu-highlights {
+            grid-template-columns: 1fr !important;
           }
         }
         .dtu-highlights {
@@ -123,7 +132,25 @@ function StorePage() {
           color: #FFFFFF !important;
         }
         .put-name-card {
-          display: none !important;
+          display: grid !important;
+          gap: 0.9rem !important;
+          padding: 1.25rem !important;
+          background: #FFFFFF !important;
+          border: 1.5px solid #E2D6C3 !important;
+          border-radius: 12px !important;
+          box-shadow: 0 4px 16px rgba(42,23,20,.05) !important;
+          width: 100% !important;
+          max-width: none !important;
+          box-sizing: border-box !important;
+        }
+        .put-name-card .field {
+          min-width: 0 !important;
+        }
+        .put-name-card input,
+        .put-name-card select {
+          width: 100% !important;
+          min-width: 0 !important;
+          box-sizing: border-box !important;
         }
         .chapter {
           min-height: auto !important;
@@ -220,7 +247,7 @@ function StorePage() {
           price="999"
           currency="INR"
         />
-        <Script src="/js/dtu-hoodie.js?v=32" strategy="afterInteractive" />
+        <Script src="/js/dtu-hoodie.js?v=33" strategy="afterInteractive" />
       </section>
 
       {/* Heritage / About section */}
