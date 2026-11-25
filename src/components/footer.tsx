@@ -11,9 +11,11 @@ export default function Footer({ onSizeGuideOpen }: FooterProps) {
         <div className="grid grid-cols-1 md:grid-cols-3 gap-10 mb-12">
           <div>
             <div className="flex items-center gap-2.5 mb-3">
-              <div className="w-8 h-8 rounded-full bg-[#781215] text-[#F7F1E8] flex items-center justify-center font-serif font-bold text-sm">
-                D
-              </div>
+              <img
+                src="/images/dtu-logo.jpg"
+                alt="DTU Hoodies Logo"
+                className="w-9 h-9 rounded-xl object-cover border border-[#E2D6C3] shadow-xs"
+              />
               <h3 className="font-serif text-xl font-bold tracking-tight text-[#1E1614]">
                 DTU <span className="text-[#781215]">MERCH</span>
               </h3>

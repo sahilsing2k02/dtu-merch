@@ -79,11 +79,15 @@ function StorePage() {
       });
     };
 
+    const handleVisitCart = () => setCartOpen(true);
+
     document.addEventListener("dtu:add-to-cart", handleAddToCart);
+    document.addEventListener("dtu:visit-cart", handleVisitCart);
     return () => {
       clearInterval(timer);
       document.removeEventListener("dtu:ready", applyConsistentBg);
       document.removeEventListener("dtu:add-to-cart", handleAddToCart);
+      document.removeEventListener("dtu:visit-cart", handleVisitCart);
     };
   }, [addItem]);
 
@@ -106,7 +110,7 @@ function StorePage() {
           price="1499"
           currency="INR"
         />
-        <Script src="/js/dtu-hoodie.js?v=4" strategy="afterInteractive" />
+        <Script src="/js/dtu-hoodie.js?v=24" strategy="afterInteractive" />
       </section>
 
       {/* Heritage / About section */}

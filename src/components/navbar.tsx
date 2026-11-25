@@ -18,9 +18,11 @@ export default function Navbar({ onCartOpen, onSizeGuideOpen }: NavbarProps) {
       <div className="max-w-7xl mx-auto flex items-center justify-between px-5 md:px-8 h-18">
         {/* Crest / Logo */}
         <a href="#" className="flex items-center gap-3 group">
-          <div className="w-9 h-9 rounded-full bg-[#781215] text-[#F7F1E8] flex items-center justify-center font-serif font-bold text-sm tracking-tight shadow-sm group-hover:bg-[#5E0D10] transition-colors">
-            D
-          </div>
+          <img
+            src="/images/dtu-logo.jpg"
+            alt="DTU Hoodies Logo"
+            className="w-10 h-10 rounded-xl object-cover border border-[#E2D6C3] shadow-xs group-hover:scale-105 transition-transform"
+          />
           <div className="flex flex-col leading-none">
             <span className="font-serif text-lg font-extrabold tracking-tight text-[#1E1614]">
               DTU <span className="text-[#781215]">MERCH</span>
@@ -33,12 +35,6 @@ export default function Navbar({ onCartOpen, onSizeGuideOpen }: NavbarProps) {
 
         {/* Desktop nav */}
         <nav className="hidden md:flex items-center gap-9 text-xs font-semibold tracking-[0.16em] uppercase text-[#6E5D53]">
-          <a href="#collection" className="hover:text-[#781215] transition-colors">
-            Collection
-          </a>
-          <a href="#about" className="hover:text-[#781215] transition-colors">
-            Heritage
-          </a>
           <button
             onClick={onSizeGuideOpen}
             className="hover:text-[#781215] transition-colors uppercase cursor-pointer"
@@ -77,20 +73,6 @@ export default function Navbar({ onCartOpen, onSizeGuideOpen }: NavbarProps) {
       {/* Mobile drawer */}
       {menuOpen && (
         <nav className="md:hidden border-t border-[#E2D6C3] bg-[#F7F1E8] animate-fade-in px-5 py-3 space-y-1">
-          <a
-            href="#collection"
-            onClick={() => setMenuOpen(false)}
-            className="block py-2.5 text-xs font-semibold tracking-[0.16em] uppercase text-[#6E5D53] hover:text-[#781215] transition-colors"
-          >
-            Collection
-          </a>
-          <a
-            href="#about"
-            onClick={() => setMenuOpen(false)}
-            className="block py-2.5 text-xs font-semibold tracking-[0.16em] uppercase text-[#6E5D53] hover:text-[#781215] transition-colors"
-          >
-            Heritage
-          </a>
           <button
             onClick={() => {
               setMenuOpen(false);
