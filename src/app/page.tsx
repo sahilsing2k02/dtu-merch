@@ -49,6 +49,7 @@ function StorePage() {
         }
         .buy {
           background: #FAF6EE !important;
+          margin-top: 1rem !important;
         }
         .name-trigger-wrap {
           margin-top: -0.85rem !important;
@@ -194,7 +195,7 @@ function StorePage() {
           price="1499"
           currency="INR"
         />
-        <Script src="/js/dtu-hoodie.js?v=27" strategy="afterInteractive" />
+        <Script src="/js/dtu-hoodie.js?v=28" strategy="afterInteractive" />
       </section>
 
       {/* Heritage / About section */}

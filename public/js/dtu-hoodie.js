@@ -71,7 +71,7 @@ label:has(input[type=radio]:focus-visible) { outline: 2px solid var(--maroon); o
 .spec span { color: var(--ink-soft); }
 
 /* buy bar: the only primary button, always in reach */
-.buy { position: sticky; bottom: 0; z-index: 2; margin-top: -6.25rem; display: grid; grid-template-columns: auto minmax(0, 1fr); align-items: center; gap: 1rem 1.5rem; padding: 1rem 0 1.25rem; background: var(--taupe); border-top: 1px solid var(--line); }
+.buy { position: sticky; bottom: 0; z-index: 2; margin-top: 1rem; display: grid; grid-template-columns: auto minmax(0, 1fr); align-items: center; gap: 1rem 1.5rem; padding: 1rem 0 1.25rem; background: var(--taupe); border-top: 1px solid var(--line); }
 .price { font-family: var(--serif); font-weight: 600; font-size: 1.625rem; line-height: 1.1; font-variant-numeric: lining-nums tabular-nums; }
 .sum { font-size: .9375rem; color: var(--ink-soft); margin-top: .15rem; }
 .add { justify-self: end; width: 100%; max-width: 17rem; min-height: 3.5rem; border: 0; border-radius: var(--r); background: var(--maroon); color: var(--cream); font-weight: 600; font-size: 1.0625rem; transition: background-color .15s ease, transform .1s ease; }
@@ -4496,15 +4496,19 @@ transformed.y += uHoodBounce * 0.35;`)};for(let M of[-1,1]){let p=new At(new Ms(
       <fieldset class="size"><div class="row"><legend>Size</legend><button type="button" class="link" data-guide>Size guide</button></div>
         <div class="sizes">${Cl.map(i=>`<label><input type="radio" name="size" value="${i}" ${i==="L"?"checked":""}>${i}</label>`).join("")}</div>
       </fieldset>
-      <div class="name-trigger-wrap"><button type="button" class="btn-name-box" data-name><span class="sq-box"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"/><path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"/></svg></span><span>Add your name and batch to the back</span></button></div>
-    </section>
-    <section class="chapter">
-      <div class="put-name-card">
-        <div><h3>Put your name under the seal</h3><p class="lede">Optional. It prints on the back exactly as you see it here.</p></div>
-        <div class="fields">
+      <div class="put-name-card" data-name>
+        <div class="row" style="margin-bottom:0.25rem">
+          <legend style="display:flex;align-items:center;gap:0.5rem">
+            <span class="sq-box"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"/><path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"/></svg></span>
+            <b>Put your name &amp; batch under the seal</b>
+          </legend>
+          <span class="val" style="font-size:0.8125rem">Optional</span>
+        </div>
+        <p class="lede" style="margin-top:0;font-size:0.875rem">Customizes the back print under the heritage university seal.</p>
+        <div class="fields" style="display:grid;grid-template-columns:1fr 1fr;gap:0.75rem">
           <div class="field"><div class="row" style="margin:0"><label class="lab" for="nm">Name</label><span class="val" id="ct">0 of ${Ja}</span></div>
-            <input id="nm" name="name" type="text" maxlength="${Ja}" autocomplete="off" autocapitalize="characters" spellcheck="false" placeholder="e.g. Suhrit Ghimire" aria-describedby="ct"></div>
-          <div class="field"><label class="lab" for="bt">Batch</label>
+            <input id="nm" name="name" type="text" maxlength="${Ja}" autocomplete="off" autocapitalize="characters" spellcheck="false" placeholder="e.g. Rahul Sharma" aria-describedby="ct"></div>
+          <div class="field"><div class="row" style="margin:0"><label class="lab" for="bt">Batch</label><span class="val">Year</span></div>
             <select id="bt" name="batch">${du.map(i=>`<option ${i===Rl?"selected":""}>${i}</option>`).join("")}</select></div>
         </div>
       </div>
