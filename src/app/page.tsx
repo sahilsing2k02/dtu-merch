@@ -52,6 +52,12 @@ function StorePage() {
           background: #FAF6EE !important;
           margin-top: 0.75rem !important;
         }
+        .price {
+          display: flex !important;
+          flex-wrap: wrap !important;
+          align-items: baseline !important;
+          gap: 0.15rem 0.35rem !important;
+        }
         @media (min-width: 821px) {
           .panel {
             align-self: center !important;
@@ -60,6 +66,19 @@ function StorePage() {
           }
         }
         @media (max-width: 480px) {
+          .sizes {
+            grid-template-columns: repeat(3, minmax(0, 1fr)) !important;
+            gap: 0.5rem !important;
+          }
+          .buy {
+            grid-template-columns: 1fr !important;
+            gap: 0.75rem !important;
+          }
+          .add {
+            max-width: none !important;
+            width: 100% !important;
+            justify-self: stretch !important;
+          }
           .put-name-card .fields {
             grid-template-columns: 1fr !important;
           }
@@ -169,7 +188,26 @@ function StorePage() {
         }
         @media (max-width: 820px) {
           .viewer {
+            position: static !important;
+            height: auto !important;
+            min-height: 0 !important;
             background: #FAF6EE !important;
+            padding: 1rem 1rem 0.75rem !important;
+          }
+          .stage {
+            height: 22rem !important;
+            min-height: 19rem !important;
+          }
+          .panel {
+            padding-inline: 1rem !important;
+            padding-bottom: 2rem !important;
+          }
+          .buy {
+            margin: 0.75rem 0 0 !important;
+            padding: 1rem 0 !important;
+          }
+          .sum {
+            max-width: none !important;
           }
         }
       `;
