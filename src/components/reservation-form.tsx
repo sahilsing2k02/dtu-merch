@@ -8,10 +8,13 @@ import { sendEmailNotification } from "@/utils/notify";
 
 interface Props {
   onClose: () => void;
+  discountedTotal?: number;
+  appliedCoupon?: string;
 }
 
-export default function ReservationForm({ onClose }: Props) {
+export default function ReservationForm({ onClose, discountedTotal, appliedCoupon }: Props) {
   const { items, totalPrice, clearCart } = useCart();
+  const effectiveTotal = typeof discountedTotal === "number" ? discountedTotal : totalPrice;
   const [submitted, setSubmitted] = useState(false);
   const [reservationId, setReservationId] = useState("");
 
@@ -43,8 +46,9 @@ export default function ReservationForm({ onClose }: Props) {
         DTU_Roll_Number: form.rollNo,
         Branch_and_Year: form.branch,
         Pickup_Point: form.pickup,
+        Coupon_Applied: appliedCoupon || "None",
         Items_Ordered: items.map((i) => `${i.name} (${i.color}, ${i.size}) x${i.qty} - ₹${i.price * i.qty}`).join(" | "),
-        Total_Amount: `₹${totalPrice.toLocaleString("en-IN")}`,
+        Total_Amount: `₹${effectiveTotal.toLocaleString("en-IN")}`,
         Payment_Method: "Pay on Campus Pickup (Cash/UPI)",
         Target_Email: "merchdtudce@gmail.com",
       },
@@ -118,8 +122,9 @@ export default function ReservationForm({ onClose }: Props) {
                   <strong>₹{(i.price * i.qty).toLocaleString("en-IN")}</strong>
                 </p>
               ))}
-              <p className="font-extrabold text-[#781215] pt-2 border-t border-[#E2D6C3]">
-                Total: ₹{totalPrice.toLocaleString("en-IN")}
+              <p className="font-extrabold text-[#781215] pt-2 border-t border-[#E2D6C3] flex items-center justify-between">
+                <span>Total Amount:</span>
+                <span>₹{effectiveTotal.toLocaleString("en-IN")}{appliedCoupon && <span className="text-xs text-emerald-700 ml-2 font-normal">({appliedCoupon} applied)</span>}</span>
               </p>
             </div>
 
@@ -223,8 +228,9 @@ export default function ReservationForm({ onClose }: Props) {
                   {i.name} ({i.size}) × {i.qty}
                 </p>
               ))}
-              <p className="font-extrabold text-[#1E1614] pt-1.5 border-t border-[#E2D6C3]">
-                Total: ₹{totalPrice.toLocaleString("en-IN")}
+              <p className="font-extrabold text-[#1E1614] pt-1.5 border-t border-[#E2D6C3] flex items-center justify-between">
+                <span>Total:</span>
+                <span>₹{effectiveTotal.toLocaleString("en-IN")}{appliedCoupon && <span className="text-xs text-emerald-700 ml-1.5 font-normal">({appliedCoupon} -10%)</span>}</span>
               </p>
             </div>
 

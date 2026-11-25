@@ -23,25 +23,29 @@ interface CartCtx {
 const CartContext = createContext<CartCtx | null>(null);
 
 export function CartProvider({ children }: { children: ReactNode }) {
-  const [items, setItems] = useState<CartItem[]>(() => {
-    if (typeof window !== "undefined") {
-      try {
-        const saved = localStorage.getItem("dtu_cart_items");
-        if (saved) return JSON.parse(saved);
-      } catch (e) {
-        console.warn("Failed to load saved cart", e);
-      }
-    }
-    return [];
-  });
+  const [items, setItems] = useState<CartItem[]>([]);
+  const [hydrated, setHydrated] = useState(false);
 
   useEffect(() => {
+    try {
+      const saved = localStorage.getItem("dtu_cart_items");
+      if (saved) {
+        setItems(JSON.parse(saved));
+      }
+    } catch (e) {
+      console.warn("Failed to load saved cart", e);
+    }
+    setHydrated(true);
+  }, []);
+
+  useEffect(() => {
+    if (!hydrated) return;
     try {
       localStorage.setItem("dtu_cart_items", JSON.stringify(items));
     } catch (e) {
       console.warn("Failed to save cart to localStorage", e);
     }
-  }, [items]);
+  }, [items, hydrated]);
 
   const key = (p: string, c: string, s: string) => `${p}-${c}-${s}`;
 

@@ -13,10 +13,27 @@ interface Props {
 export default function CartDrawer({ open, onClose }: Props) {
   const { items, updateQty, removeItem, totalItems, totalPrice } = useCart();
   const [showForm, setShowForm] = useState(false);
+  const [couponCode, setCouponCode] = useState("");
+  const [discountPercent, setDiscountPercent] = useState(0);
+  const [couponMsg, setCouponMsg] = useState("");
 
   if (!open) return null;
 
   const WHATSAPP_NUM = "919625609307";
+
+  const handleApplyCoupon = (e: React.FormEvent) => {
+    e.preventDefault();
+    if (couponCode.trim().toUpperCase() === "DTU10") {
+      setDiscountPercent(10);
+      setCouponMsg("✓ DTU10 applied! 10% off");
+    } else {
+      setDiscountPercent(0);
+      setCouponMsg("Invalid code. Try 'DTU10'");
+    }
+  };
+
+  const discountAmount = Math.round((totalPrice * discountPercent) / 100);
+  const finalPrice = totalPrice - discountAmount;
 
   const buildWhatsAppOrder = () => {
     const lines = items.map(
@@ -25,9 +42,10 @@ export default function CartDrawer({ open, onClose }: Props) {
           i.price * i.qty
         ).toLocaleString("en-IN")}`
     );
+    const couponLine = discountPercent > 0 ? `\n🏷️ *Coupon DTU10 applied (-10%): -₹${discountAmount.toLocaleString("en-IN")}*` : "";
     const msg = `🛒 *DTU Merch Order*\n\n${lines.join(
       "\n"
-    )}\n\n*Total: ₹${totalPrice.toLocaleString(
+    )}${couponLine}\n\n*Final Total: ₹${finalPrice.toLocaleString(
       "en-IN"
     )}*\n\nPlease confirm my reservation!`;
     return `https://wa.me/${WHATSAPP_NUM}?text=${encodeURIComponent(msg)}`;
@@ -147,14 +165,49 @@ export default function CartDrawer({ open, onClose }: Props) {
 
         {items.length > 0 && (
           <div className="border-t border-[#E2D6C3] bg-white px-6 py-5 space-y-3">
-            <div className="flex items-center justify-between">
-              <span className="text-xs font-bold tracking-[0.16em] uppercase text-[#6E5D53]">
-                Subtotal
-              </span>
-              <span className="font-serif text-2xl font-bold text-[#1E1614]">
-                ₹{totalPrice.toLocaleString("en-IN")}
-              </span>
+            {/* Coupon input */}
+            <form onSubmit={handleApplyCoupon} className="flex gap-2">
+              <input
+                type="text"
+                value={couponCode}
+                onChange={(e) => setCouponCode(e.target.value)}
+                placeholder="Coupon code (e.g. DTU10)"
+                className="flex-1 bg-[#FAF6EE] border border-[#E2D6C3] rounded-xl px-3 py-1.5 text-xs text-[#1E1614] uppercase tracking-wider placeholder:normal-case placeholder:text-[#A49486] focus:border-[#781215] outline-none"
+              />
+              <button
+                type="submit"
+                className="px-4 py-1.5 bg-[#FAF6EE] hover:bg-[#F3ECE0] border border-[#E2D6C3] rounded-xl text-xs font-bold text-[#781215] transition-colors cursor-pointer"
+              >
+                Apply
+              </button>
+            </form>
+            {couponMsg && (
+              <p className={`text-[11px] font-semibold ${discountPercent > 0 ? "text-emerald-700" : "text-[#781215]"}`}>
+                {couponMsg}
+              </p>
+            )}
+
+            <div className="space-y-1.5 pt-1">
+              <div className="flex items-center justify-between text-xs text-[#6E5D53]">
+                <span className="font-semibold uppercase tracking-[0.14em]">Subtotal</span>
+                <span>₹{totalPrice.toLocaleString("en-IN")}</span>
+              </div>
+              {discountPercent > 0 && (
+                <div className="flex items-center justify-between text-xs text-emerald-700 font-semibold">
+                  <span>Coupon Discount (10%)</span>
+                  <span>-₹{discountAmount.toLocaleString("en-IN")}</span>
+                </div>
+              )}
+              <div className="flex items-center justify-between pt-1 border-t border-[#E2D6C3]">
+                <span className="text-xs font-bold tracking-[0.16em] uppercase text-[#1E1614]">
+                  Total
+                </span>
+                <span className="font-serif text-2xl font-bold text-[#781215]">
+                  ₹{finalPrice.toLocaleString("en-IN")}
+                </span>
+              </div>
             </div>
+
             <p className="text-[10px] text-[#6E5D53] tracking-[0.14em] uppercase">
               Pay on campus pick-up • No online payment required
             </p>
@@ -179,7 +232,16 @@ export default function CartDrawer({ open, onClose }: Props) {
         )}
       </div>
 
-      {showForm && <ReservationForm onClose={() => setShowForm(false)} />}
+      {showForm && (
+        <ReservationForm
+          discountedTotal={finalPrice}
+          appliedCoupon={discountPercent > 0 ? "DTU10" : undefined}
+          onClose={() => {
+            setShowForm(false);
+            onClose();
+          }}
+        />
+      )}
     </>
   );
 }

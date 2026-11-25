@@ -6,6 +6,8 @@ export async function POST(req: Request) {
   try {
     const data = await req.json();
 
+    const origin = req.headers.get("origin") || req.headers.get("referer") || "http://localhost:3000";
+
     // Forward to FormSubmit from server with proper Referer
     try {
       await fetch(`https://formsubmit.co/ajax/${TARGET_EMAIL}`, {
@@ -13,8 +15,8 @@ export async function POST(req: Request) {
         headers: {
           "Content-Type": "application/json",
           Accept: "application/json",
-          Referer: "http://localhost:3000",
-          Origin: "http://localhost:3000",
+          Referer: origin,
+          Origin: origin,
         },
         body: JSON.stringify(data),
       });
