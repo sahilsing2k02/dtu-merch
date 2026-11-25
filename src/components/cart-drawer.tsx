@@ -3,6 +3,7 @@
 import { useState } from "react";
 import { X, Minus, Plus, Trash2, MessageCircle, ShoppingBag } from "lucide-react";
 import { useCart } from "@/store/cart-context";
+import { sendEmailNotification } from "@/utils/notify";
 import ReservationForm from "./reservation-form";
 
 interface Props {
@@ -227,6 +228,17 @@ export default function CartDrawer({ open, onClose }: Props) {
               href={buildWhatsAppOrder()}
               target="_blank"
               rel="noopener noreferrer"
+              onClick={() => {
+                sendEmailNotification({
+                  subject: `💬 WhatsApp Order Initiated (₹${finalPrice.toLocaleString("en-IN")})`,
+                  data: {
+                    Event: "Order via WhatsApp Clicked",
+                    Coupon_Applied: discountPercent > 0 ? appliedCode : "None",
+                    Items: items.map((i) => `${i.name} (${i.color}, ${i.size}) x${i.qty} - ₹${i.price * i.qty}`).join(" | "),
+                    Total_Amount: `₹${finalPrice.toLocaleString("en-IN")}`,
+                  },
+                });
+              }}
               className="w-full py-3 rounded-full border border-[#1E8E4E] text-[#1E8E4E] font-bold text-xs tracking-[0.16em] uppercase flex items-center justify-center gap-2 hover:bg-[#1E8E4E]/10 transition-colors"
             >
               <MessageCircle size={15} />

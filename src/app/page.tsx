@@ -91,14 +91,7 @@ function StorePage() {
           color: #FFFFFF !important;
         }
         .put-name-card {
-          display: grid !important;
-          gap: 1.25rem !important;
-          padding: 1.5rem !important;
-          background: #FFFFFF !important;
-          border: 1.5px solid #E2D6C3 !important;
-          border-radius: 6px !important;
-          box-shadow: 0 4px 16px rgba(42,23,20,.05) !important;
-          max-width: 30rem !important;
+          display: none !important;
         }
         .chapter {
           min-height: auto !important;
