@@ -32,9 +32,9 @@ export function CartProvider({ children }: { children: ReactNode }) {
       const saved = localStorage.getItem("dtu_cart_items");
       if (saved) {
         const parsed = JSON.parse(saved) as CartItem[];
-        // Sync unit prices with current catalog so stale cached prices (e.g. 1499) don't skew totals
+        // Sync unit prices with current catalog MRP (1499) regardless of legacy SKU
         const synced = parsed.map((item) => {
-          const match = products.find((p) => p.id === item.productId);
+          const match = products.find((p) => p.id === item.productId) || products[0];
           return match ? { ...item, price: match.price } : item;
         });
         setItems(synced);
@@ -57,16 +57,18 @@ export function CartProvider({ children }: { children: ReactNode }) {
   const key = (p: string, c: string, s: string) => `${p}-${c}-${s}`;
 
   const addItem = useCallback((item: Omit<CartItem, "qty">) => {
+    const catalogPrice = (products.find((p) => p.id === item.productId) || products[0])?.price ?? item.price;
+    const normalizedItem = { ...item, price: catalogPrice };
     setItems((prev) => {
       const idx = prev.findIndex(
-        (i) => key(i.productId, i.color, i.size) === key(item.productId, item.color, item.size)
+        (i) => key(i.productId, i.color, i.size) === key(normalizedItem.productId, normalizedItem.color, normalizedItem.size)
       );
       if (idx >= 0) {
         const next = [...prev];
-        next[idx] = { ...next[idx], qty: next[idx].qty + 1 };
+        next[idx] = { ...next[idx], price: catalogPrice, qty: next[idx].qty + 1 };
         return next;
       }
-      return [...prev, { ...item, qty: 1 }];
+      return [...prev, { ...normalizedItem, qty: 1 }];
     });
   }, []);
 

@@ -226,7 +226,7 @@ function StorePage() {
         : detail.colourwayLabel;
 
       const chosenSize = detail.size || "L";
-      const itemPrice = detail.price || 1499;
+      const itemPrice = 1499;
 
       addItem({
         productId: detail.sku || "heritage-1941",
