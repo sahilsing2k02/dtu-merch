@@ -5,6 +5,7 @@ import Image from "next/image";
 import { X, RotateCw, Minus, Plus, ShoppingBag, Check } from "lucide-react";
 import type { HoodieProduct } from "@/data/products";
 import { useCart } from "@/store/cart-context";
+import { sendEmailNotification } from "@/utils/notify";
 import SizeGuideModal from "./size-guide-modal";
 
 interface Props {
@@ -38,6 +39,20 @@ export default function ProductViewer({ product, onClose }: Props) {
     }
     setAdded(true);
     setTimeout(() => setAdded(false), 1600);
+
+    sendEmailNotification({
+      subject: `🛍️ New Add-to-Cart: ${product.name} (${size})`,
+      data: {
+        Event: "Item Added from Product Viewer",
+        Product: product.name,
+        Color: color.name,
+        Size: size,
+        Quantity: qty,
+        Price_Per_Item: `₹${product.price}`,
+        Total_Price: `₹${product.price * qty}`,
+        Alert_For: "merchdtudce@gmail.com",
+      },
+    });
   };
 
   return (

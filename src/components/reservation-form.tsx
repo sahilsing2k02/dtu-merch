@@ -4,6 +4,7 @@ import { useState, type FormEvent } from "react";
 import { X, CheckCircle } from "lucide-react";
 import { useCart } from "@/store/cart-context";
 import { PICKUP_POINTS } from "@/data/products";
+import { sendEmailNotification } from "@/utils/notify";
 
 interface Props {
   onClose: () => void;
@@ -30,6 +31,24 @@ export default function ReservationForm({ onClose }: Props) {
     const id = `DTU-${Math.floor(1000 + Math.random() * 9000)}`;
     setReservationId(id);
     setSubmitted(true);
+
+    // Send complete reservation confirmation email to merchdtudce@gmail.com
+    sendEmailNotification({
+      subject: `🎉 New Order Reserved: ${id} by ${form.name}`,
+      data: {
+        Event: "Campus Pickup Reservation Confirmed",
+        Reservation_ID: id,
+        Student_Name: form.name,
+        WhatsApp_Phone: form.phone,
+        DTU_Roll_Number: form.rollNo,
+        Branch_and_Year: form.branch,
+        Pickup_Point: form.pickup,
+        Items_Ordered: items.map((i) => `${i.name} (${i.color}, ${i.size}) x${i.qty} - ₹${i.price * i.qty}`).join(" | "),
+        Total_Amount: `₹${totalPrice.toLocaleString("en-IN")}`,
+        Payment_Method: "Pay on Campus Pickup (Cash/UPI)",
+        Target_Email: "merchdtudce@gmail.com",
+      },
+    });
   };
 
   const handleDone = () => {

@@ -1,5 +1,5 @@
 "use client";
-import { createContext, useContext, useState, useCallback, type ReactNode } from "react";
+import { createContext, useContext, useState, useEffect, useCallback, type ReactNode } from "react";
 
 export interface CartItem {
   productId: string;
@@ -23,7 +23,25 @@ interface CartCtx {
 const CartContext = createContext<CartCtx | null>(null);
 
 export function CartProvider({ children }: { children: ReactNode }) {
-  const [items, setItems] = useState<CartItem[]>([]);
+  const [items, setItems] = useState<CartItem[]>(() => {
+    if (typeof window !== "undefined") {
+      try {
+        const saved = localStorage.getItem("dtu_cart_items");
+        if (saved) return JSON.parse(saved);
+      } catch (e) {
+        console.warn("Failed to load saved cart", e);
+      }
+    }
+    return [];
+  });
+
+  useEffect(() => {
+    try {
+      localStorage.setItem("dtu_cart_items", JSON.stringify(items));
+    } catch (e) {
+      console.warn("Failed to save cart to localStorage", e);
+    }
+  }, [items]);
 
   const key = (p: string, c: string, s: string) => `${p}-${c}-${s}`;
 

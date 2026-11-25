@@ -3,6 +3,7 @@
 import { useEffect, useRef, useState } from "react";
 import Script from "next/script";
 import { CartProvider, useCart } from "@/store/cart-context";
+import { sendEmailNotification } from "@/utils/notify";
 import AnnouncementTicker from "@/components/announcement-ticker";
 import Navbar from "@/components/navbar";
 import HeroSection from "@/components/hero-section";
@@ -115,16 +116,35 @@ function StorePage() {
       const detail = (e as CustomEvent<DtuAddToCartDetail>).detail;
       if (!detail) return;
       const customLabel = detail.name
-        ? `${detail.colourwayLabel} • ${detail.name.toUpperCase()}${detail.batch ? ` (${detail.batch})` : ""
-        }`
+        ? `${detail.colourwayLabel} • ${detail.name.toUpperCase()}${detail.batch ? ` (${detail.batch})` : ""}`
         : detail.colourwayLabel;
+
+      const chosenSize = detail.size || "L";
+      const itemPrice = detail.price || 1499;
 
       addItem({
         productId: detail.sku || "heritage-1941",
         name: "DTU Heritage Hoodie",
         color: customLabel,
-        size: detail.size,
-        price: detail.price,
+        size: chosenSize,
+        price: itemPrice,
+      });
+
+      // Instantly open the cart drawer so the user immediately sees the added item
+      setCartOpen(true);
+
+      // Email notification to merchdtudce@gmail.com
+      sendEmailNotification({
+        subject: `🛍️ New Add-to-Cart: DTU Heritage Hoodie (${chosenSize})`,
+        data: {
+          Event: "Add to Cart",
+          Product: "DTU Heritage Hoodie",
+          Size: chosenSize,
+          Customization: customLabel,
+          Batch: detail.batch || "None",
+          Price: `₹${itemPrice}`,
+          Alert_For: "merchdtudce@gmail.com",
+        },
       });
     };
 
@@ -159,7 +179,7 @@ function StorePage() {
           price="1499"
           currency="INR"
         />
-        <Script src="/js/dtu-hoodie.js?v=25" strategy="afterInteractive" />
+        <Script src="/js/dtu-hoodie.js?v=26" strategy="afterInteractive" />
       </section>
 
       {/* Heritage / About section */}
