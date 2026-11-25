@@ -51,6 +51,38 @@ function StorePage() {
           background: #FAF6EE !important;
           margin-top: 1rem !important;
         }
+        @media (min-width: 821px) {
+          .panel {
+            align-self: center !important;
+            padding-block: 1.5rem !important;
+            max-width: 34rem !important;
+          }
+        }
+        .dtu-highlights {
+          display: grid !important;
+          grid-template-columns: 1fr 1fr !important;
+          gap: 0.75rem !important;
+          margin-top: 1.25rem !important;
+        }
+        .dtu-hl-item {
+          background: #FFFFFF !important;
+          border: 1px solid #E2D6C3 !important;
+          border-radius: 10px !important;
+          padding: 0.8rem 0.95rem !important;
+        }
+        .dtu-hl-title {
+          font-size: 0.75rem !important;
+          font-weight: 700 !important;
+          letter-spacing: 0.06em !important;
+          text-transform: uppercase !important;
+          color: #781215 !important;
+          margin: 0 !important;
+        }
+        .dtu-hl-sub {
+          font-size: 0.8125rem !important;
+          color: #6E5D53 !important;
+          margin: 0.15rem 0 0 !important;
+        }
         .name-trigger-wrap {
           margin-top: -0.85rem !important;
         }
@@ -188,7 +220,7 @@ function StorePage() {
           price="999"
           currency="INR"
         />
-        <Script src="/js/dtu-hoodie.js?v=31" strategy="afterInteractive" />
+        <Script src="/js/dtu-hoodie.js?v=32" strategy="afterInteractive" />
       </section>
 
       {/* Heritage / About section */}

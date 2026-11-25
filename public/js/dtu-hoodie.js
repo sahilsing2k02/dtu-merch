@@ -4518,6 +4518,12 @@ transformed.y += uHoodBounce * 0.35;`)};for(let M of[-1,1]){let p=new At(new Ms(
       <button type="submit" class="add">Add to cart</button>
       <p class="note" role="status" aria-live="polite"></p>
     </div>
+  <div class="dtu-highlights">
+      <div class="dtu-hl-item"><p class="dtu-hl-title">400 GSM Fleece</p><p class="dtu-hl-sub">Heavyweight combed cotton</p></div>
+      <div class="dtu-hl-item"><p class="dtu-hl-title">AB4 Pick-up</p><p class="dtu-hl-sub">Free campus collection</p></div>
+      <div class="dtu-hl-item"><p class="dtu-hl-title">Pay on Delivery</p><p class="dtu-hl-sub">Cash or UPI at pickup</p></div>
+      <div class="dtu-hl-item"><p class="dtu-hl-title">Code DTU33</p><p class="dtu-hl-sub">33% off first 50 orders</p></div>
+    </div>
   </form>
 </div>
 <dialog aria-labelledby="sg"><div class="dlg">
