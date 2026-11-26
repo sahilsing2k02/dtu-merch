@@ -2,7 +2,7 @@
 
 import { useState } from "react";
 import { X, Minus, Plus, Trash2, MessageCircle, ShoppingBag } from "lucide-react";
-import { useCart } from "@/store/cart-context";
+import { useCart, getItemAdvancePerUnit } from "@/store/cart-context";
 import { sendEmailNotification } from "@/utils/notify";
 import ReservationForm from "./reservation-form";
 
@@ -17,7 +17,7 @@ export default function CartDrawer({ open, onClose }: Props) {
   const [couponCode, setCouponCode] = useState("DTU33");
   const [appliedCode, setAppliedCode] = useState("DTU33");
   const [discountApplied, setDiscountApplied] = useState(true);
-  const [couponMsg, setCouponMsg] = useState("✓ DTU33 pre-applied! Varsity ₹1,199 • Plain ₹799");
+  const [couponMsg, setCouponMsg] = useState("✓ DTU33 pre-applied! Minimo from ₹799 • Classico from ₹1,099");
 
   if (!open) return null;
 
@@ -29,7 +29,7 @@ export default function CartDrawer({ open, onClose }: Props) {
     if (normalized === "DTU33" || normalized === "DTU10") {
       setAppliedCode(normalized);
       setDiscountApplied(true);
-      setCouponMsg(`✓ ${normalized} applied! Varsity ₹1,199 • Plain ₹799`);
+      setCouponMsg(`✓ ${normalized} applied! Minimo from ₹799 • Classico from ₹1,099`);
     } else {
       setAppliedCode("");
       setDiscountApplied(false);
@@ -41,6 +41,11 @@ export default function CartDrawer({ open, onClose }: Props) {
     ? Math.min(totalPrice, items.reduce((s, i) => s + (i.discountPerUnit ?? 300) * i.qty, 0))
     : 0;
   const finalPrice = Math.max(0, totalPrice - discountAmount);
+  const advancePayable = Math.min(
+    finalPrice,
+    items.reduce((s, i) => s + getItemAdvancePerUnit(i) * i.qty, 0)
+  );
+  const balanceOnPickup = Math.max(0, finalPrice - advancePayable);
 
   const buildWhatsAppOrder = () => {
     const lines = items.map(
@@ -213,10 +218,18 @@ export default function CartDrawer({ open, onClose }: Props) {
                   ₹{finalPrice.toLocaleString("en-IN")}
                 </span>
               </div>
+              <div className="flex items-center justify-between text-xs font-semibold text-[#781215]">
+                <span>Advance to Reserve Now</span>
+                <span>₹{advancePayable.toLocaleString("en-IN")}</span>
+              </div>
+              <div className="flex items-center justify-between text-xs text-[#6E5D53]">
+                <span>Balance on Campus Pick-up</span>
+                <span>₹{balanceOnPickup.toLocaleString("en-IN")}</span>
+              </div>
             </div>
 
-            <p className="text-[10px] text-[#6E5D53] tracking-[0.14em] uppercase">
-              Up to ₹850/hoodie advance to reserve • Balance on campus pick-up
+            <p className="text-[10px] text-[#6E5D53] tracking-[0.12em] uppercase">
+              Minimo ₹600 (₹700 w/ name) • Classico ₹850 (₹950 w/ name) advance
             </p>
 
             <button

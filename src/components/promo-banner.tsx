@@ -38,7 +38,7 @@ export default function PromoBanner() {
               Starting ₹799
             </p>
             <p className="text-[#1E1614] text-base sm:text-lg font-semibold mt-1.5">
-              Plain ₹799 <span className="line-through opacity-65">₹1,099</span> • Varsity ₹1,199 <span className="line-through opacity-65">₹1,499</span>
+              Minimo ₹799 <span className="line-through opacity-65">₹1,099</span> • Classico ₹1,099 <span className="line-through opacity-65">₹1,399</span>
             </p>
           </div>
 

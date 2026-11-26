@@ -2,7 +2,7 @@
 
 import { useState, type FormEvent } from "react";
 import { X, CheckCircle, MessageCircle } from "lucide-react";
-import { useCart } from "@/store/cart-context";
+import { useCart, getItemAdvancePerUnit } from "@/store/cart-context";
 import { PICKUP_POINTS } from "@/data/products";
 import { sendEmailNotification } from "@/utils/notify";
 
@@ -14,9 +14,13 @@ interface Props {
 }
 
 export default function ReservationForm({ onClose, discountedTotal, discountAmount = 0, appliedCoupon }: Props) {
-  const { items, totalItems, totalPrice, clearCart } = useCart();
+  const { items, totalPrice, clearCart } = useCart();
   const effectiveTotal = typeof discountedTotal === "number" ? discountedTotal : totalPrice;
-  const advancePayable = Math.min(effectiveTotal, totalItems * 850);
+  const rawAdvance = items.reduce(
+    (sum, item) => sum + getItemAdvancePerUnit(item) * item.qty,
+    0
+  );
+  const advancePayable = Math.min(effectiveTotal, rawAdvance);
   const balanceAmount = Math.max(0, effectiveTotal - advancePayable);
   const [submitted, setSubmitted] = useState(false);
   const [reservationId, setReservationId] = useState("");
@@ -56,7 +60,7 @@ export default function ReservationForm({ onClose, discountedTotal, discountAmou
         Total_Amount: `₹${effectiveTotal.toLocaleString("en-IN")}`,
         Advance_Payable_Now: `₹${advancePayable.toLocaleString("en-IN")}`,
         Balance_On_Collection: `₹${balanceAmount.toLocaleString("en-IN")}`,
-        Payment_Method: "₹850/hoodie UPI Advance (agrawalharshit324@oksbi) + Balance on Pick-up",
+        Payment_Method: `₹${advancePayable.toLocaleString("en-IN")} UPI Advance (agrawalharshit324@oksbi) + ₹${balanceAmount.toLocaleString("en-IN")} Balance on Pick-up`,
         Target_Email: "merchdtudce@gmail.com",
       },
     });
@@ -134,7 +138,7 @@ export default function ReservationForm({ onClose, discountedTotal, discountAmou
                 <span>₹{effectiveTotal.toLocaleString("en-IN")}{appliedCoupon && <span className="text-xs text-emerald-700 ml-2 font-normal">({appliedCoupon} applied)</span>}</span>
               </p>
               <p className="font-bold text-[#1E1614] flex items-center justify-between text-xs pt-1">
-                <span>{balanceAmount > 0 ? `Advance Payable (₹850 × ${totalItems}):` : "Advance Payable (Full):"}</span>
+                <span>{balanceAmount > 0 ? "Advance Payable (UPI):" : "Advance Payable (Full):"}</span>
                 <span>₹{advancePayable.toLocaleString("en-IN")}</span>
               </p>
               <p className="font-bold text-[#6E5D53] flex items-center justify-between text-xs">
@@ -171,7 +175,7 @@ export default function ReservationForm({ onClose, discountedTotal, discountAmou
         ) : (
           <form onSubmit={handleSubmit} className="p-6 space-y-4">
             <p className="text-xs text-[#6E5D53] leading-relaxed">
-              Pay <strong className="text-[#781215]">₹850 per hoodie</strong> advance via UPI to reserve your piece. Pay the remaining balance on campus collection.
+              Pay the advance via UPI to reserve (<strong className="text-[#1E1614]">Minimo: ₹600</strong> / ₹700 w/ name • <strong className="text-[#1E1614]">Classico: ₹850</strong> / ₹950 w/ name) and pay the remaining balance when collecting your hoodie.
             </p>
 
             <div>
@@ -248,21 +252,29 @@ export default function ReservationForm({ onClose, discountedTotal, discountAmou
 
             {/* Summary & UPI Advance QR */}
             <div className="bg-[#FAF6EE] border border-[#E2D6C3] rounded-2xl p-4 text-xs space-y-1.5 text-[#6E5D53]">
-              {items.map((i) => (
-                <p key={`${i.productId}-${i.color}-${i.size}`}>
-                  {i.name} ({i.size}) × {i.qty}
-                </p>
-              ))}
+              {items.map((i) => {
+                const itemAdv = getItemAdvancePerUnit(i) * i.qty;
+                return (
+                  <p key={`${i.productId}-${i.color}-${i.size}`} className="flex items-center justify-between gap-2">
+                    <span>
+                      {i.name} ({i.color}, {i.size}) × {i.qty}
+                    </span>
+                    <span className="font-semibold text-[#1E1614] shrink-0">
+                      Adv. ₹{itemAdv.toLocaleString("en-IN")}
+                    </span>
+                  </p>
+                );
+              })}
               <p className="font-semibold text-[#1E1614] pt-1.5 border-t border-[#E2D6C3] flex items-center justify-between">
                 <span>Order Total:</span>
                 <span>₹{effectiveTotal.toLocaleString("en-IN")}{appliedCoupon && <span className="text-xs text-emerald-700 ml-1.5 font-normal">({appliedCoupon} applied)</span>}</span>
               </p>
               <p className="font-extrabold text-[#781215] flex items-center justify-between text-sm">
-                <span>{balanceAmount > 0 ? `Amount Payable Now (₹850 × ${totalItems}):` : "Amount Payable Now:"}</span>
+                <span>Amount Payable Now (UPI Advance):</span>
                 <span>₹{advancePayable.toLocaleString("en-IN")}</span>
               </p>
               <p className="font-bold text-[#1E1614] flex items-center justify-between">
-                <span>Balance After Delivery / Collection:</span>
+                <span>Balance Due on Collection:</span>
                 <span>₹{balanceAmount.toLocaleString("en-IN")}</span>
               </p>
             </div>

@@ -8,6 +8,8 @@ declare module "react" {
           price?: string | number;
           currency?: string;
           seal?: string;
+          design?: string;
+          colour?: string;
         },
         HTMLElement
       >;

@@ -1,335 +1,34 @@
 "use client";
 
-import { useEffect, useRef, useState } from "react";
+import { useCallback, useEffect, useState } from "react";
 import Script from "next/script";
-import { CartProvider, useCart } from "@/store/cart-context";
-import { sendEmailNotification } from "@/utils/notify";
+import { CartProvider } from "@/store/cart-context";
+import { HOODIE_DESIGNS } from "@/data/products";
 import AnnouncementTicker from "@/components/announcement-ticker";
 import Navbar from "@/components/navbar";
 import HeroSection from "@/components/hero-section";
 import PromoBanner from "@/components/promo-banner";
+import HoodieShowcaseCard from "@/components/hoodie-showcase-card";
 import CartDrawer from "@/components/cart-drawer";
 import SizeGuideModal from "@/components/size-guide-modal";
 import WhatsAppButton from "@/components/whatsapp-button";
 import Footer from "@/components/footer";
 
-interface DtuAddToCartDetail {
-  sku: string;
-  colourway: string;
-  colourwayLabel: string;
-  size: string;
-  name: string | null;
-  batch: string | null;
-  price: number;
-  currency: string;
-  quantity: number;
-}
-
 function StorePage() {
   const [cartOpen, setCartOpen] = useState(false);
   const [sizeGuideOpen, setSizeGuideOpen] = useState(false);
-  const { addItem } = useCart();
-  const hoodieRef = useRef<HTMLElement | null>(null);
+
+  const handleItemAdded = useCallback(() => {
+    setCartOpen(true);
+  }, []);
 
   useEffect(() => {
-    const applyConsistentBg = () => {
-      const el = hoodieRef.current;
-      const root = el?.shadowRoot;
-      if (!root || root.getElementById("dtu-theme-sync")) return;
-      const style = document.createElement("style");
-      style.id = "dtu-theme-sync";
-      style.textContent = `
-        :host {
-          --taupe: #FAF6EE !important;
-          --paper: #FFFFFF !important;
-          --line: #E2D6C3 !important;
-          --ink: #1E1614 !important;
-          --ink-soft: #6E5D53 !important;
-          background: #FAF6EE !important;
-        }
-        .designs {
-          display: grid !important;
-          grid-template-columns: 1fr 1fr !important;
-          gap: 0.65rem !important;
-        }
-        .designs label {
-          position: relative !important;
-          display: flex !important;
-          flex-direction: column !important;
-          gap: 0.15rem !important;
-          padding: 0.7rem 0.85rem !important;
-          background: #FFFFFF !important;
-          border: 1.5px solid #E2D6C3 !important;
-          border-radius: 8px !important;
-          cursor: pointer !important;
-          transition: all 0.15s ease !important;
-          font-size: 0.875rem !important;
-          font-weight: 600 !important;
-          color: #1E1614 !important;
-        }
-        .designs label:has(input:checked) {
-          border-color: #781215 !important;
-          background: #781215 !important;
-          color: #FAF6EE !important;
-        }
-        .designs label span.d-sub {
-          font-size: 0.75rem !important;
-          font-weight: 500 !important;
-          opacity: 0.8 !important;
-        }
-        .designs input {
-          position: absolute !important;
-          opacity: 0 !important;
-          pointer-events: none !important;
-        }
-        @media (max-width: 480px) {
-          .designs {
-            grid-template-columns: 1fr !important;
-          }
-        }
-        .buy {
-          position: static !important;
-          background: #FAF6EE !important;
-          margin-top: 0.75rem !important;
-        }
-        .price {
-          display: flex !important;
-          flex-wrap: wrap !important;
-          align-items: baseline !important;
-          gap: 0.15rem 0.35rem !important;
-        }
-        @media (min-width: 821px) {
-          .panel {
-            align-self: center !important;
-            padding-block: 1rem !important;
-            max-width: 34rem !important;
-          }
-          h2 {
-            font-size: clamp(2rem, 3.1vw, 2.85rem) !important;
-            line-height: 1.05 !important;
-          }
-          .lede {
-            font-size: 0.98rem !important;
-            margin-top: 0.45rem !important;
-          }
-          .chapter {
-            gap: 0.85rem !important;
-            padding-block: 0.5rem 0.75rem !important;
-          }
-          .dtu-highlights {
-            margin-top: 0.75rem !important;
-          }
-        }
-        @media (max-width: 480px) {
-          .sizes {
-            grid-template-columns: repeat(3, minmax(0, 1fr)) !important;
-            gap: 0.5rem !important;
-          }
-          .buy {
-            grid-template-columns: 1fr !important;
-            gap: 0.75rem !important;
-          }
-          .add {
-            max-width: none !important;
-            width: 100% !important;
-            justify-self: stretch !important;
-          }
-          .put-name-card .fields {
-            grid-template-columns: 1fr !important;
-          }
-          .dtu-highlights {
-            grid-template-columns: 1fr !important;
-          }
-        }
-        .dtu-highlights {
-          display: grid !important;
-          grid-template-columns: 1fr 1fr !important;
-          gap: 0.75rem !important;
-          margin-top: 1.25rem !important;
-        }
-        .dtu-hl-item {
-          background: #FFFFFF !important;
-          border: 1px solid #E2D6C3 !important;
-          border-radius: 10px !important;
-          padding: 0.8rem 0.95rem !important;
-        }
-        .dtu-hl-title {
-          font-size: 0.75rem !important;
-          font-weight: 700 !important;
-          letter-spacing: 0.06em !important;
-          text-transform: uppercase !important;
-          color: #781215 !important;
-          margin: 0 !important;
-        }
-        .dtu-hl-sub {
-          font-size: 0.8125rem !important;
-          color: #6E5D53 !important;
-          margin: 0.15rem 0 0 !important;
-        }
-        .name-trigger-wrap {
-          margin-top: -0.85rem !important;
-        }
-        .btn-name-box {
-          display: inline-flex !important;
-          align-items: center !important;
-          gap: .75rem !important;
-          padding: .65rem .95rem !important;
-          background: #FFFFFF !important;
-          border: 1.5px solid #E2D6C3 !important;
-          border-radius: 6px !important;
-          color: #1E1614 !important;
-          font-size: .9375rem !important;
-          font-weight: 550 !important;
-          cursor: pointer !important;
-          transition: all .15s ease !important;
-          box-shadow: 0 1px 3px rgba(42,23,20,.04) !important;
-        }
-        .btn-name-box:hover {
-          border-color: #781215 !important;
-          background: #F7E4D0 !important;
-          color: #781215 !important;
-        }
-        .btn-name-box .sq-box {
-          display: inline-grid !important;
-          place-items: center !important;
-          width: 1.5rem !important;
-          height: 1.5rem !important;
-          border: 1.5px solid #E2D6C3 !important;
-          border-radius: 4px !important;
-          background: #FAF6EE !important;
-          color: #1E1614 !important;
-          flex-shrink: 0 !important;
-        }
-        .btn-name-box:hover .sq-box {
-          border-color: #781215 !important;
-          background: #781215 !important;
-          color: #FFFFFF !important;
-        }
-        .put-name-card {
-          display: grid !important;
-          gap: 0.9rem !important;
-          padding: 1.25rem !important;
-          background: #FFFFFF !important;
-          border: 1.5px solid #E2D6C3 !important;
-          border-radius: 12px !important;
-          box-shadow: 0 4px 16px rgba(42,23,20,.05) !important;
-          width: 100% !important;
-          max-width: none !important;
-          box-sizing: border-box !important;
-        }
-        .put-name-card .fields {
-          max-width: none !important;
-          width: 100% !important;
-        }
-        .put-name-card .field {
-          min-width: 0 !important;
-        }
-        .put-name-card input,
-        .put-name-card select {
-          width: 100% !important;
-          min-width: 0 !important;
-          box-sizing: border-box !important;
-        }
-        .chapter {
-          min-height: auto !important;
-          min-height: 0 !important;
-          justify-content: flex-start !important;
-          gap: 1.25rem !important;
-          padding-block: 1rem 1.25rem !important;
-        }
-        .chapter + .chapter {
-          border-top: 1px solid #E2D6C3 !important;
-          padding-top: 1.25rem !important;
-          margin-top: 0.5rem !important;
-        }
-        .chapter.last {
-          display: none !important;
-        }
-        @media (max-width: 820px) {
-          .viewer {
-            position: static !important;
-            height: auto !important;
-            min-height: 0 !important;
-            background: #FAF6EE !important;
-            padding: 1rem 1rem 0.75rem !important;
-          }
-          .stage {
-            height: clamp(20rem, 52vw, 26rem) !important;
-            min-height: 19rem !important;
-          }
-          .sizes {
-            grid-template-columns: repeat(3, minmax(0, 1fr)) !important;
-            gap: 0.5rem !important;
-          }
-          .panel {
-            padding-inline: 1rem !important;
-            padding-bottom: 2rem !important;
-          }
-          .buy {
-            margin: 0.75rem 0 0 !important;
-            padding: 1rem 0 !important;
-          }
-          .sum {
-            max-width: none !important;
-          }
-        }
-      `;
-      root.appendChild(style);
-    };
-
-    applyConsistentBg();
-    const timer = setInterval(applyConsistentBg, 150);
-    document.addEventListener("dtu:ready", applyConsistentBg);
-
-    const handleAddToCart = (e: Event) => {
-      const detail = (e as CustomEvent<DtuAddToCartDetail>).detail;
-      if (!detail) return;
-      const customLabel = detail.name
-        ? `${detail.colourwayLabel} • ${detail.name.toUpperCase()}${detail.batch ? ` (${detail.batch})` : ""}`
-        : detail.colourwayLabel;
-
-      const chosenSize = detail.size || "L";
-      const isPlain = detail.colourway === "plain";
-      const itemName = isPlain ? "DTU Classic Hoodie (No Stripes)" : "DTU Heritage Hoodie (Varsity)";
-
-      addItem({
-        productId: isPlain ? "heritage-plain" : "heritage-1941",
-        name: itemName,
-        color: customLabel,
-        size: chosenSize,
-        price: isPlain ? 1099 : 1499,
-        discountPerUnit: 300,
-      });
-
-      // Instantly open the cart drawer so the user immediately sees the added item
-      setCartOpen(true);
-
-      // Email notification to merchdtudce@gmail.com
-      sendEmailNotification({
-        subject: `🛍️ New Add-to-Cart: ${itemName} (${chosenSize})`,
-        data: {
-          Event: "Add to Cart",
-          Product: itemName,
-          Size: chosenSize,
-          Customization: customLabel,
-          Batch: detail.batch || "None",
-          Price: `₹${isPlain ? 799 : 1199}`,
-          Alert_For: "merchdtudce@gmail.com",
-        },
-      });
-    };
-
     const handleVisitCart = () => setCartOpen(true);
-
-    document.addEventListener("dtu:add-to-cart", handleAddToCart);
     document.addEventListener("dtu:visit-cart", handleVisitCart);
     return () => {
-      clearInterval(timer);
-      document.removeEventListener("dtu:ready", applyConsistentBg);
-      document.removeEventListener("dtu:add-to-cart", handleAddToCart);
       document.removeEventListener("dtu:visit-cart", handleVisitCart);
     };
-  }, [addItem]);
+  }, []);
 
   return (
     <>
@@ -341,16 +40,37 @@ function StorePage() {
       <PromoBanner />
       <HeroSection />
 
-      {/* 360° Interactive 3D Hoodie Section */}
-      <section id="collection" className="scroll-mt-20">
-        <dtu-hoodie
-          ref={(node) => {
-            hoodieRef.current = node;
-          }}
-          price="1499"
-          currency="INR"
-        />
-        <Script src="/js/dtu-hoodie.js?v=41" strategy="afterInteractive" />
+      {/* Side-by-Side 360° Interactive 3D Hoodie Cards & Difference Checklist */}
+      <section
+        id="collection"
+        className="scroll-mt-20 max-w-7xl mx-auto px-5 md:px-8 py-10 md:py-12"
+      >
+        <div className="flex flex-col sm:flex-row sm:items-end justify-between gap-3 mb-7">
+          <div>
+            <p className="text-[11px] tracking-[0.24em] text-[#781215] font-bold uppercase mb-1.5">
+              Compare &amp; Customize
+            </p>
+            <h2 className="font-serif text-3xl md:text-4xl font-bold tracking-tight text-[#1E1614]">
+              Two Editions. Custom Name &amp; Batch.
+            </h2>
+          </div>
+          <p className="text-xs sm:text-sm text-[#6E5D53] max-w-md">
+            Rotate both 3D hoodies side by side, preview your name &amp; B.Tech
+            batch on the back, and compare what each design includes below.
+          </p>
+        </div>
+
+        <div className="grid grid-cols-1 lg:grid-cols-2 gap-6 lg:gap-8 items-start">
+          {HOODIE_DESIGNS.map((design) => (
+            <HoodieShowcaseCard
+              key={design.id}
+              design={design}
+              onItemAdded={handleItemAdded}
+            />
+          ))}
+        </div>
+
+        <Script src="/js/dtu-hoodie.js?v=47" strategy="afterInteractive" />
       </section>
 
       {/* Heritage / About section */}

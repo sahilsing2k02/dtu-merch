@@ -9,7 +9,31 @@ export interface CartItem {
   size: string;
   price: number;
   discountPerUnit?: number;
+  advancePerUnit?: number;
+  customName?: string | null;
   qty: number;
+}
+
+export function getItemAdvancePerUnit(item: {
+  productId: string;
+  name: string;
+  color: string;
+  advancePerUnit?: number;
+  customName?: string | null;
+}): number {
+  if (typeof item.advancePerUnit === "number" && item.advancePerUnit > 0) {
+    return item.advancePerUnit;
+  }
+  const isMinimo =
+    item.productId === "heritage-design-2" ||
+    item.productId === "heritage-plain" ||
+    item.name.toLowerCase().includes("minimo");
+  const baseAdvance = isMinimo ? 600 : 850;
+  const hasCustomName =
+    typeof item.customName === "string"
+      ? item.customName.trim().length > 0
+      : item.color.includes("•") && !item.color.endsWith("• Standard");
+  return baseAdvance + (hasCustomName ? 100 : 0);
 }
 
 interface CartCtx {
@@ -36,7 +60,16 @@ export function CartProvider({ children }: { children: ReactNode }) {
         // Sync unit prices with current catalog MRP (1499) regardless of legacy SKU
         const synced = parsed.map((item) => {
           const match = products.find((p) => p.id === item.productId) || products[0];
-          return match ? { ...item, price: match.price, discountPerUnit: match.discountPerUnit } : item;
+          if (!match) return item;
+          const validPrices = [match.price, match.price + 100];
+          const syncedPrice = validPrices.includes(item.price) ? item.price : match.price;
+          const syncedAdvance = getItemAdvancePerUnit(item);
+          return {
+            ...item,
+            price: syncedPrice,
+            discountPerUnit: match.discountPerUnit,
+            advancePerUnit: syncedAdvance,
+          };
         });
         setItems(synced);
       }
@@ -59,16 +92,23 @@ export function CartProvider({ children }: { children: ReactNode }) {
 
   const addItem = useCallback((item: Omit<CartItem, "qty">) => {
     const match = products.find((p) => p.id === item.productId) || products[0];
-    const catalogPrice = match?.price ?? item.price;
+    const catalogPrice = item.price > 0 ? item.price : (match?.price ?? item.price);
     const discountPerUnit = match?.discountPerUnit ?? item.discountPerUnit ?? 300;
-    const normalizedItem = { ...item, price: catalogPrice, discountPerUnit };
+    const advancePerUnit = getItemAdvancePerUnit(item);
+    const normalizedItem = { ...item, price: catalogPrice, discountPerUnit, advancePerUnit };
     setItems((prev) => {
       const idx = prev.findIndex(
         (i) => key(i.productId, i.color, i.size) === key(normalizedItem.productId, normalizedItem.color, normalizedItem.size)
       );
       if (idx >= 0) {
         const next = [...prev];
-        next[idx] = { ...next[idx], price: catalogPrice, discountPerUnit, qty: next[idx].qty + 1 };
+        next[idx] = {
+          ...next[idx],
+          price: catalogPrice,
+          discountPerUnit,
+          advancePerUnit,
+          qty: next[idx].qty + 1,
+        };
         return next;
       }
       return [...prev, { ...normalizedItem, qty: 1 }];

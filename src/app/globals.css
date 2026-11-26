@@ -80,3 +80,14 @@ dtu-hoodie {
   display: block;
   --dtu-top: 72px;
 }
+
+/* Native lightbox modal scroll containment and backdrop */
+dialog.dtu-lightbox:modal {
+  overscroll-behavior: contain;
+}
+dialog.dtu-lightbox::backdrop {
+  overflow: hidden;
+  overscroll-behavior: contain;
+  background-color: rgba(30, 22, 20, 0.72);
+  backdrop-filter: blur(4px);
+}
