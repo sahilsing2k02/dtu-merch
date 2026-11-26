@@ -16,9 +16,33 @@ const cormorant = Cormorant_Garamond({
 });
 
 export const metadata: Metadata = {
+  metadataBase: new URL("https://dtu-merch.vercel.app"),
   title: "DTU Merch — Official Collegiate Hoodie",
   description:
-    "400 GSM heavyweight cream & oxblood collegiate hoodie for all Delhi Technological University students and alumni. Campus pick-up only.",
+    "400 GSM heavyweight off-white & oxblood varsity collegiate hoodie for all Delhi Technological University students and alumni. Varsity Stripe ₹1,199 (MRP ₹1,499) • Classic Plain ₹799.",
+  openGraph: {
+    type: "website",
+    url: "https://dtu-merch.vercel.app",
+    siteName: "DTU Merch",
+    title: "DTU Merch — The DTU Heritage Hoodie",
+    description:
+      "400 GSM DTU Varsity Stripe Hoodie with oxblood sleeve strips & university seal. ₹1,199 with DTU33 (MRP ₹1,499). Campus pick-up at AB4.",
+    images: [
+      {
+        url: "/images/dtu-cream-hoodie.jpg",
+        width: 1024,
+        height: 682,
+        alt: "DTU '41 Varsity Stripe Heritage Hoodie",
+      },
+    ],
+  },
+  twitter: {
+    card: "summary_large_image",
+    title: "DTU Merch — The DTU Heritage Hoodie",
+    description:
+      "400 GSM DTU Varsity Stripe Hoodie with oxblood sleeve strips & university seal. ₹1,199 with DTU33 (MRP ₹1,499).",
+    images: ["/images/dtu-cream-hoodie.jpg"],
+  },
   icons: {
     icon: "/images/dtu-logo.jpg",
     apple: "/images/dtu-logo.jpg",
