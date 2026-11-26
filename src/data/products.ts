@@ -48,6 +48,7 @@ export interface ComparisonRow {
 }
 
 export const SIZE_CHART: Record<string, { chest: string; length: string; shoulder: string }> = {
+  XS:  { chest: "38", length: "25", shoulder: "18" },
   S:   { chest: "40", length: "26", shoulder: "19" },
   M:   { chest: "42", length: "27", shoulder: "20" },
   L:   { chest: "44", length: "28", shoulder: "21" },

@@ -12,7 +12,7 @@ interface Props {
 }
 
 export default function CartDrawer({ open, onClose }: Props) {
-  const { items, updateQty, removeItem, totalItems, totalPrice } = useCart();
+  const { items, updateQty, removeItem, totalItems } = useCart();
   const [showForm, setShowForm] = useState(false);
   const [couponCode, setCouponCode] = useState("DTU33");
   const [appliedCode, setAppliedCode] = useState("DTU33");

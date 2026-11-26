@@ -6,6 +6,12 @@ import { useCart, getItemAdvancePerUnit, calculateCheckoutTotals } from "@/store
 import { HOODIE_DESIGNS, PICKUP_POINTS } from "@/data/products";
 import { sendEmailNotification } from "@/utils/notify";
 
+function createReservationId(): string {
+  const bytes = new Uint32Array(1);
+  crypto.getRandomValues(bytes);
+  return `DTU-${1000 + (bytes[0] % 9000)}`;
+}
+
 interface Props {
   onClose: () => void;
   appliedCoupon?: string;
@@ -81,25 +87,34 @@ export default function ReservationForm({ onClose, appliedCoupon }: Props) {
       return;
     }
 
+    const cleanName = form.name.trim();
+    const cleanRollNo = form.rollNo.trim();
+    const cleanBranch = form.branch.trim();
+    const cleanUtr = form.utr.trim();
+    if (!cleanName || !cleanRollNo || !cleanBranch || !cleanUtr) {
+      setFormError("Please fill in your name, roll number, branch & year, and UPI UTR.");
+      return;
+    }
+
     if (!/^\d{10}$/.test(form.phone)) {
       setFormError("Please enter an exact 10-digit WhatsApp number after +91.");
       return;
     }
 
     setSubmitting(true);
-    const id = `DTU-${Math.floor(1000 + Math.random() * 9000)}`;
+    const id = createReservationId();
     setReservationId(id);
 
     const fullPhone = `+91 ${form.phone}`;
     const ok = await sendEmailNotification({
-      subject: `🎉 New Paid Order ${id} by ${form.name} (${totalItems} hoodies • UTR: ${form.utr})`,
+      subject: `🎉 New Paid Order ${id} by ${cleanName} (${totalItems} hoodies • UTR: ${cleanUtr})`,
       data: {
         Event: "Campus Pick-up Reservation",
         Reservation_ID: id,
-        Student_Name: form.name,
+        Student_Name: cleanName,
         WhatsApp_Phone: fullPhone,
-        DTU_Roll_Number: form.rollNo,
-        Branch_and_Year: form.branch,
+        DTU_Roll_Number: cleanRollNo,
+        Branch_and_Year: cleanBranch,
         Pickup_Point: form.pickup,
         Total_Hoodies_Jerseys: totalItems,
         Jerseys_By_Product: productSummaryLabel || `${totalItems}`,
@@ -111,9 +126,9 @@ export default function ReservationForm({ onClose, appliedCoupon }: Props) {
         Total_Amount: `₹${effectiveTotal.toLocaleString("en-IN")}`,
         Advance_Paid_Now: `₹${advancePayable.toLocaleString("en-IN")}`,
         Balance_On_Collection: `₹${balanceAmount.toLocaleString("en-IN")}`,
-        UPI_Transaction_ID_UTR: form.utr,
+        UPI_Transaction_ID_UTR: cleanUtr,
         Payment_App: form.upiApp,
-        Payer_Name_Or_UPI_ID: form.payerUpiId || "Not specified",
+        Payer_Name_Or_UPI_ID: form.payerUpiId.trim() || "Not specified",
         Payment_Method: `₹${advancePayable.toLocaleString("en-IN")} UPI Advance (agrawalharshit324@oksbi) + ₹${balanceAmount.toLocaleString("en-IN")} Balance on Pick-up`,
         Target_Email: "merchdtudce@gmail.com",
       },
@@ -135,19 +150,21 @@ export default function ReservationForm({ onClose, appliedCoupon }: Props) {
   const inputClass =
     "w-full bg-[#FAF6EE] border border-[#E2D6C3] rounded-xl px-3.5 py-2.5 text-sm text-[#1E1614] placeholder:text-[#A49486] focus:border-[#781215] focus:bg-white outline-none transition-colors";
 
+  const dismissModal = submitted ? handleDone : onClose;
+
   return (
     <>
       <div
         className="fixed inset-0 z-[60] bg-[#1E1614]/60 backdrop-blur-xs animate-fade-in"
-        onClick={onClose}
+        onClick={dismissModal}
       />
       <div className="fixed z-[60] inset-4 md:inset-x-0 md:inset-y-8 md:max-w-lg md:mx-auto bg-white border border-[#E2D6C3] rounded-3xl shadow-2xl overflow-y-auto animate-scale-up">
-        <div className="flex items-center justify-between px-6 py-4 border-b border-[#E2D6C3] bg-[#FAF6EE]">
+        <div className="sticky top-0 z-10 flex items-center justify-between px-6 py-4 border-b border-[#E2D6C3] bg-[#FAF6EE]">
           <h3 className="font-serif font-bold text-lg text-[#1E1614]">
             {submitted ? "Reservation Confirmed" : "Campus Pick-up Reservation"}
           </h3>
           <button
-            onClick={onClose}
+            onClick={dismissModal}
             className="p-1.5 rounded-full hover:bg-[#EAE0D0] text-[#1E1614] transition-colors cursor-pointer"
             aria-label="Close"
           >
@@ -255,6 +272,22 @@ export default function ReservationForm({ onClose, appliedCoupon }: Props) {
               className="w-full py-3.5 rounded-full bg-[#781215] text-[#FAF6EE] font-bold text-xs tracking-[0.18em] uppercase hover:bg-[#5E0D10] transition-colors cursor-pointer"
             >
               Done
+            </button>
+          </div>
+        ) : totalItems === 0 ? (
+          <div className="p-8 text-center space-y-4">
+            <p className="font-serif text-xl font-bold text-[#1E1614]">
+              Your bag is empty
+            </p>
+            <p className="text-xs text-[#6E5D53]">
+              Add at least one hoodie from the collection before completing a campus pick-up reservation.
+            </p>
+            <button
+              type="button"
+              onClick={onClose}
+              className="px-6 py-3 rounded-full bg-[#781215] text-[#FAF6EE] font-bold text-xs tracking-[0.16em] uppercase hover:bg-[#5E0D10] transition-colors cursor-pointer"
+            >
+              Back to Store
             </button>
           </div>
         ) : (

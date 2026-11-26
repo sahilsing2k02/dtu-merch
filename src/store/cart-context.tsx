@@ -47,6 +47,11 @@ export function calculateCheckoutTotals(items: CartItem[], isCouponApplied: bool
   };
 }
 
+function hasCustomBackprint(item: { color: string; customName?: string | null }): boolean {
+  if (typeof item.customName === "string") return item.customName.trim().length > 0;
+  return item.color.includes("•") && !item.color.endsWith("• Standard");
+}
+
 export function getItemAdvancePerUnit(item: {
   productId: string;
   name: string;
@@ -62,11 +67,7 @@ export function getItemAdvancePerUnit(item: {
     item.productId === "heritage-plain" ||
     item.name.toLowerCase().includes("minimo");
   const baseAdvance = isMinimo ? 600 : 850;
-  const hasCustomName =
-    typeof item.customName === "string"
-      ? item.customName.trim().length > 0
-      : item.color.includes("•") && !item.color.endsWith("• Standard");
-  return baseAdvance + (hasCustomName ? 100 : 0);
+  return baseAdvance + (hasCustomBackprint(item) ? 100 : 0);
 }
 
 interface CartCtx {
@@ -86,30 +87,37 @@ export function CartProvider({ children }: { children: ReactNode }) {
   const [hydrated, setHydrated] = useState(false);
 
   useEffect(() => {
-    try {
-      const saved = localStorage.getItem("dtu_cart_items");
-      if (saved) {
-        const parsed = JSON.parse(saved) as CartItem[];
-        // Sync unit prices with current catalog MRP (1499) regardless of legacy SKU
-        const synced = parsed.map((item) => {
-          const match = products.find((p) => p.id === item.productId) || products[0];
-          if (!match) return item;
-          const validPrices = [match.price, match.price + 100];
-          const syncedPrice = validPrices.includes(item.price) ? item.price : match.price;
-          const syncedAdvance = getItemAdvancePerUnit(item);
-          return {
-            ...item,
-            price: syncedPrice,
-            discountPerUnit: match.discountPerUnit,
-            advancePerUnit: syncedAdvance,
-          };
-        });
-        setItems(synced);
+    let active = true;
+    queueMicrotask(() => {
+      if (!active) return;
+      try {
+        const saved = localStorage.getItem("dtu_cart_items");
+        if (saved) {
+          const parsed = JSON.parse(saved) as CartItem[];
+          const synced = parsed.map((item) => {
+            const match = products.find(
+              (p) => p.id === item.productId || p.name.toLowerCase() === item.name.toLowerCase()
+            );
+            if (!match) return item;
+            const syncedPrice = match.price + (hasCustomBackprint(item) ? 100 : 0);
+            const syncedAdvance = getItemAdvancePerUnit(item);
+            return {
+              ...item,
+              price: syncedPrice,
+              discountPerUnit: match.discountPerUnit,
+              advancePerUnit: syncedAdvance,
+            };
+          });
+          setItems(synced);
+        }
+      } catch (e) {
+        console.warn("Failed to load saved cart", e);
       }
-    } catch (e) {
-      console.warn("Failed to load saved cart", e);
-    }
-    setHydrated(true);
+      setHydrated(true);
+    });
+    return () => {
+      active = false;
+    };
   }, []);
 
   useEffect(() => {

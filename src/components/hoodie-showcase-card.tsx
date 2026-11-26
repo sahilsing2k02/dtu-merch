@@ -316,10 +316,12 @@ export default function HoodieShowcaseCard({
   }, []);
 
   useEffect(() => {
+    let timer: ReturnType<typeof setInterval> | null = null;
+
     const syncShadowCard = () => {
       const el = hoodieRef.current;
       const root = el?.shadowRoot;
-      if (!root) return;
+      if (!root) return false;
 
       if (!root.getElementById("dtu-theme-sync")) {
         const style = document.createElement("style");
@@ -350,13 +352,26 @@ export default function HoodieShowcaseCard({
           )
           .join("");
       }
+
+      return Boolean(root.getElementById("dtu-theme-sync") && heading && highlightsEl);
     };
 
-    syncShadowCard();
-    const timer = setInterval(syncShadowCard, 150);
+    if (!syncShadowCard()) {
+      timer = setInterval(() => {
+        if (syncShadowCard() && timer) {
+          clearInterval(timer);
+          timer = null;
+        }
+      }, 150);
+    }
 
     const el = hoodieRef.current;
-    const handleReady = () => syncShadowCard();
+    const handleReady = () => {
+      if (syncShadowCard() && timer) {
+        clearInterval(timer);
+        timer = null;
+      }
+    };
     el?.addEventListener("dtu:ready", handleReady);
 
     const handleAddToCart = (e: Event) => {
@@ -409,7 +424,7 @@ export default function HoodieShowcaseCard({
     el?.addEventListener("dtu:add-to-cart", handleAddToCart);
 
     return () => {
-      clearInterval(timer);
+      if (timer) clearInterval(timer);
       el?.removeEventListener("dtu:ready", handleReady);
       el?.removeEventListener("dtu:add-to-cart", handleAddToCart);
     };
