@@ -257,15 +257,26 @@ export default function ReservationForm({ onClose, appliedCoupon }: Props) {
               via UPI or Cash on collection.
             </div>
 
-            <a
-              href="https://chat.whatsapp.com/Iv0HUZkZ8g41tZSnylZmcW"
-              target="_blank"
-              rel="noopener noreferrer"
-              className="w-full py-3.5 rounded-full bg-[#1E8E4E] hover:bg-[#17733E] text-white font-bold text-xs tracking-[0.16em] uppercase flex items-center justify-center gap-2 transition-colors mb-3 shadow-md shadow-[#1E8E4E]/20"
-            >
-              <MessageCircle size={16} />
-              Join DTU Merch WhatsApp Group
-            </a>
+            <div className="bg-[#1E8E4E]/8 border border-[#1E8E4E]/25 rounded-2xl p-4 mb-4 text-left space-y-3">
+              <div>
+                <p className="text-[11px] font-bold tracking-[0.14em] uppercase text-[#1E8E4E] mb-1">
+                  Stay Updated on Your Order
+                </p>
+                <p className="text-xs text-[#1E1614] leading-relaxed">
+                  Please join the official DTU Merch WhatsApp group for{" "}
+                  <strong>delivery updates, batch readiness, and campus pick-up timings</strong>.
+                </p>
+              </div>
+              <a
+                href="https://chat.whatsapp.com/Iv0HUZkZ8g41tZSnylZmcW"
+                target="_blank"
+                rel="noopener noreferrer"
+                className="w-full py-3.5 rounded-full bg-[#1E8E4E] hover:bg-[#17733E] text-white font-bold text-xs tracking-[0.14em] uppercase flex items-center justify-center gap-2 transition-colors shadow-md shadow-[#1E8E4E]/20"
+              >
+                <MessageCircle size={16} />
+                Join WhatsApp Group for Delivery Updates
+              </a>
+            </div>
 
             <button
               onClick={handleDone}
