@@ -68,6 +68,9 @@ const SHADOW_CARD_CSS = `
     box-shadow: 0 1px 3px rgba(30, 22, 20, 0.04) !important;
     padding: 1.4rem 1.4rem 1.5rem !important;
     max-width: none !important;
+    width: 100% !important;
+    box-sizing: border-box !important;
+    overflow-x: clip !important;
     align-self: stretch !important;
     min-width: 0 !important;
   }
@@ -158,8 +161,11 @@ const SHADOW_CARD_CSS = `
     position: static !important;
     background: #FFFFFF !important;
     border-top: 1px solid #E2D6C3 !important;
-    margin-top: 0.25rem !important;
+    margin: 0.25rem 0 0 !important;
     padding: 1rem 0 0 !important;
+    width: 100% !important;
+    min-width: 0 !important;
+    box-sizing: border-box !important;
     grid-template-columns: auto minmax(0, 1fr) !important;
     gap: 0.75rem 1rem !important;
   }
@@ -246,15 +252,26 @@ const SHADOW_CARD_CSS = `
       grid-template-columns: 1fr !important;
     }
     .buy {
-      grid-template-columns: 1fr !important;
+      margin: 0.25rem 0 0 !important;
+      padding: 1rem 0 0 !important;
+      grid-template-columns: minmax(0, 1fr) !important;
     }
     .add {
-      max-width: none !important;
+      max-width: 100% !important;
+      min-width: 0 !important;
       width: 100% !important;
+      box-sizing: border-box !important;
       justify-self: stretch !important;
     }
     .dtu-highlights {
       grid-template-columns: 1fr !important;
+    }
+  }
+  @media (max-width: 360px) {
+    .views button {
+      min-width: 4.35rem !important;
+      padding: 0 0.75rem !important;
+      font-size: 0.875rem !important;
     }
   }
 `;

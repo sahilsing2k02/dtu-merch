@@ -389,11 +389,11 @@ export default function ReservationForm({ onClose, appliedCoupon }: Props) {
                 <p className="text-[11px] font-bold text-[#781215] tracking-[0.14em] uppercase">
                   Number of Jerseys by Product
                 </p>
-                <span className="px-2.5 py-0.5 rounded-full bg-[#FAF6EE] border border-[#E2D6C3] text-[11px] font-bold text-[#1E1614]">
+                <span className="px-2.5 py-0.5 rounded-full bg-[#FAF6EE] border border-[#E2D6C3] text-[11px] font-bold text-[#1E1614] whitespace-nowrap shrink-0">
                   Total: {totalItems}
                 </span>
               </div>
-              <div className="grid grid-cols-2 gap-2">
+              <div className="grid grid-cols-1 sm:grid-cols-2 gap-2">
                 {productCounts.map((p) => (
                   <div
                     key={p.id}
@@ -497,7 +497,7 @@ export default function ReservationForm({ onClose, appliedCoupon }: Props) {
               <img
                 src="/images/upi-qr.jpg"
                 alt="UPI Payment QR Code - Harshit Agrawal"
-                className="w-48 mx-auto rounded-xl border border-[#E2D6C3] shadow-xs"
+                className="w-44 sm:w-48 max-w-full mx-auto rounded-xl border border-[#E2D6C3] shadow-xs"
               />
               <p className="text-[11px] text-[#6E5D53]">
                 UPI ID: <strong className="text-[#1E1614] select-all">agrawalharshit324@oksbi</strong>
