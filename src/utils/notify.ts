@@ -1,4 +1,4 @@
-// Email notification via Web3Forms (client-side) + /api/notify-cart (Resend / Gmail SMTP / server Web3Forms)
+// Email notification via Web3Forms (CORS-simple FormData in browser) + /api/notify-cart fallback
 
 export interface NotificationPayload {
   subject: string;
@@ -16,6 +16,20 @@ function dataUrlToBlob(dataUrl: string): Blob | null {
   return new Blob([bytes], { type: m[1] });
 }
 
+function buildWeb3FormData(
+  subject: string,
+  fields: Record<string, string | number | null | undefined>
+): FormData {
+  const form = new FormData();
+  form.append("access_key", CLIENT_WEB3FORMS_KEY);
+  form.append("subject", subject);
+  form.append("from_name", "DTU Merch Store");
+  for (const [k, v] of Object.entries(fields)) {
+    if (v != null) form.append(k, String(v));
+  }
+  return form;
+}
+
 async function sendWeb3FormsFromBrowser(
   subject: string,
   fields: Record<string, string | number | null | undefined>,
@@ -24,39 +38,29 @@ async function sendWeb3FormsFromBrowser(
 ): Promise<boolean> {
   if (!CLIENT_WEB3FORMS_KEY) return false;
 
-  // Try multipart upload first (works on Web3Forms Pro with file attachments)
+  // 1. Try FormData with attachment (CORS-simple, no custom headers; succeeds on Web3Forms Pro)
   if (attachmentDataUrl) {
     const blob = dataUrlToBlob(attachmentDataUrl);
     if (blob) {
       try {
-        const form = new FormData();
-        form.append("access_key", CLIENT_WEB3FORMS_KEY);
-        form.append("subject", subject);
-        form.append("from_name", "DTU Merch Store");
-        for (const [k, v] of Object.entries(fields)) {
-          if (v != null) form.append(k, String(v));
-        }
+        const form = buildWeb3FormData(subject, fields);
         form.append("attachment", blob, attachmentName || "payment-screenshot.jpg");
         const res = await fetch("https://api.web3forms.com/submit", { method: "POST", body: form });
         const json = await res.json().catch(() => null);
         if (res.ok && json?.success) return true;
       } catch {
-        // Fall through to JSON submission
+        // Fall through to text-only FormData
       }
     }
   }
 
+  // 2. Pure FormData without attachment or custom headers (avoids CORS preflight; works on Free plan)
   try {
-    const res = await fetch("https://api.web3forms.com/submit", {
-      method: "POST",
-      headers: { "Content-Type": "application/json", Accept: "application/json" },
-      body: JSON.stringify({
-        access_key: CLIENT_WEB3FORMS_KEY,
-        subject,
-        from_name: "DTU Merch Store",
-        ...fields,
-      }),
-    });
+    const form = buildWeb3FormData(
+      subject,
+      attachmentName ? { ...fields, Payment_Screenshot_File: attachmentName } : fields
+    );
+    const res = await fetch("https://api.web3forms.com/submit", { method: "POST", body: form });
     const json = await res.json().catch(() => null);
     return !!(res.ok && json?.success);
   } catch {
