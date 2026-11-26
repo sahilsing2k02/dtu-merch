@@ -60,13 +60,21 @@ function StorePage() {
           </p>
         </div>
 
-        <div className="grid grid-cols-1 lg:grid-cols-2 gap-6 lg:gap-8 items-start">
-          {HOODIE_DESIGNS.map((design) => (
-            <HoodieShowcaseCard
+        <div className="grid grid-cols-1 lg:grid-cols-2 gap-0 divide-y lg:divide-y-0 lg:divide-x divide-[#D9C8B2] items-start">
+          {HOODIE_DESIGNS.map((design, idx) => (
+            <div
               key={design.id}
-              design={design}
-              onItemAdded={handleItemAdded}
-            />
+              className={
+                idx === 0
+                  ? "pb-8 lg:pb-0 lg:pr-8 min-w-0"
+                  : "pt-8 lg:pt-0 lg:pl-8 min-w-0"
+              }
+            >
+              <HoodieShowcaseCard
+                design={design}
+                onItemAdded={handleItemAdded}
+              />
+            </div>
           ))}
         </div>
 
