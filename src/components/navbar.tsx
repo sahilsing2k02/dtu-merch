@@ -29,15 +29,15 @@ export default function Navbar({ onCartOpen, onSizeGuideOpen }: NavbarProps) {
             </span>
           </a>
 
-          <div className="hidden lg:inline-flex items-center gap-2 pl-4 border-l border-[#E2D6C3]">
-            <span className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-white border border-[#E2D6C3] text-[11px] font-medium text-[#1E1614] shadow-2xs whitespace-nowrap">
-              <Tag size={12} className="text-[#781215] shrink-0" />
+          <div className="hidden lg:inline-flex items-center pl-4 border-l border-[#E2D6C3]">
+            <span className="inline-flex items-center gap-2 px-4 py-1.5 rounded-full bg-[#FAF6EE] border border-[#781215]/30 text-sm font-semibold text-[#1E1614] shadow-xs whitespace-nowrap">
+              <Tag size={15} className="text-[#781215] shrink-0" />
               <span>
-                <strong className="text-[#781215]">Buy 3:</strong> ₹50 off/hoodie
+                <strong className="text-[#781215] font-bold">Buy 3:</strong> ₹50 off/hoodie
               </span>
               <span className="text-[#D9C8B2]">•</span>
               <span>
-                <strong className="text-[#781215]">Buy 4+:</strong> ₹100 off/hoodie
+                <strong className="text-[#781215] font-bold">Buy 4+:</strong> ₹100 off/hoodie
               </span>
             </span>
           </div>
@@ -81,14 +81,14 @@ export default function Navbar({ onCartOpen, onSizeGuideOpen }: NavbarProps) {
       </div>
 
       {/* Top-left bundle strip for mobile/tablet so header stays uncrowded */}
-      <div className="lg:hidden border-t border-[#E2D6C3]/70 bg-[#FAF6EE]/95 px-5 py-1.5 text-[11px] text-[#1E1614] flex items-center gap-1.5 overflow-x-auto whitespace-nowrap">
-        <Tag size={12} className="text-[#781215] shrink-0" />
+      <div className="lg:hidden border-t border-[#E2D6C3]/80 bg-[#FAF6EE] px-4 sm:px-5 py-2 text-xs sm:text-sm font-semibold text-[#1E1614] flex flex-wrap items-center gap-x-2 gap-y-0.5">
+        <Tag size={14} className="text-[#781215] shrink-0" />
         <span>
-          <strong className="text-[#781215]">Buy 3:</strong> ₹50 off/hoodie
+          <strong className="text-[#781215] font-bold">Buy 3:</strong> ₹50 off/hoodie
         </span>
         <span className="text-[#D9C8B2]">•</span>
         <span>
-          <strong className="text-[#781215]">Buy 4+:</strong> ₹100 off/hoodie
+          <strong className="text-[#781215] font-bold">Buy 4+:</strong> ₹100 off/hoodie
         </span>
       </div>
 
