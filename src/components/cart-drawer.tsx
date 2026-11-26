@@ -17,7 +17,7 @@ export default function CartDrawer({ open, onClose }: Props) {
   const [couponCode, setCouponCode] = useState("DTU33");
   const [appliedCode, setAppliedCode] = useState("DTU33");
   const [discountApplied, setDiscountApplied] = useState(true);
-  const [couponMsg, setCouponMsg] = useState("✓ DTU33 pre-applied! Special price: ₹1,200");
+  const [couponMsg, setCouponMsg] = useState("✓ DTU33 pre-applied! Varsity ₹1,199 • Plain ₹799");
 
   if (!open) return null;
 
@@ -29,7 +29,7 @@ export default function CartDrawer({ open, onClose }: Props) {
     if (normalized === "DTU33" || normalized === "DTU10") {
       setAppliedCode(normalized);
       setDiscountApplied(true);
-      setCouponMsg(`✓ ${normalized} applied! Special price: ₹1,200`);
+      setCouponMsg(`✓ ${normalized} applied! Varsity ₹1,199 • Plain ₹799`);
     } else {
       setAppliedCode("");
       setDiscountApplied(false);
@@ -37,7 +37,9 @@ export default function CartDrawer({ open, onClose }: Props) {
     }
   };
 
-  const discountAmount = discountApplied ? Math.min(totalPrice, totalItems * 299) : 0;
+  const discountAmount = discountApplied
+    ? Math.min(totalPrice, items.reduce((s, i) => s + (i.discountPerUnit ?? 300) * i.qty, 0))
+    : 0;
   const finalPrice = Math.max(0, totalPrice - discountAmount);
 
   const buildWhatsAppOrder = () => {

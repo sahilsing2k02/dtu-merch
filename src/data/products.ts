@@ -13,6 +13,7 @@ export interface HoodieProduct {
   subtitle: string;
   price: number;
   originalPrice: number;
+  discountPerUnit: number;
   specs: string[];
   colors: HoodieColor[];
   sizes: string[];
@@ -43,6 +44,7 @@ export const products: HoodieProduct[] = [
       "Off-white 400 GSM fleece with oxblood sleeve stripes, varsity chest typography & DelTech back seal",
     price: 1499,
     originalPrice: 1499,
+    discountPerUnit: 300,
     specs: ["400 GSM FLEECE", "OXBLOOD STRIPE", "PUFF & CREST PRINT"],
     image: "/images/dtu-cream-hoodie.jpg",
     colors: [
@@ -57,6 +59,31 @@ export const products: HoodieProduct[] = [
     ],
     sizes: ["S", "M", "L", "XL", "XXL"],
     badge: "OFFICIAL DTU EDITION",
+    frontText: ["DTU", "DELHI", "DELTECH"],
+    backText: ["DELTECH", "SEAL"],
+    backSubtext: "Delhi Technological University",
+  },
+  {
+    id: "heritage-plain",
+    name: "DTU '41 Classic Hoodie (No Stripes)",
+    subtitle:
+      "Minimalist off-white 400 GSM fleece without sleeve stripes, varsity chest typography & DelTech back seal",
+    price: 1200,
+    originalPrice: 1200,
+    discountPerUnit: 401,
+    specs: ["400 GSM FLEECE", "CLEAN SLEEVES", "PUFF & CREST PRINT"],
+    image: "/images/dtu-cream-hoodie.jpg",
+    colors: [
+      {
+        name: "Off White (No Stripes)",
+        hex: "#F5F2EB",
+        frontGradient: "from-[#F7EBDC] via-[#F2E2CC] to-[#E9D5BA]",
+        backGradient: "from-[#F2E2CC] via-[#EBD9C1] to-[#E2CCB0]",
+        isCreamTheme: true,
+      },
+    ],
+    sizes: ["S", "M", "L", "XL", "XXL"],
+    badge: "MINIMAL DTU EDITION",
     frontText: ["DTU", "DELHI", "DELTECH"],
     backText: ["DELTECH", "SEAL"],
     backSubtext: "Delhi Technological University",

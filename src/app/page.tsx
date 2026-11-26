@@ -47,6 +47,45 @@ function StorePage() {
           --ink-soft: #6E5D53 !important;
           background: #FAF6EE !important;
         }
+        .designs {
+          display: grid !important;
+          grid-template-columns: 1fr 1fr !important;
+          gap: 0.65rem !important;
+        }
+        .designs label {
+          display: flex !important;
+          flex-direction: column !important;
+          gap: 0.15rem !important;
+          padding: 0.7rem 0.85rem !important;
+          background: #FFFFFF !important;
+          border: 1.5px solid #E2D6C3 !important;
+          border-radius: 8px !important;
+          cursor: pointer !important;
+          transition: all 0.15s ease !important;
+          font-size: 0.875rem !important;
+          font-weight: 600 !important;
+          color: #1E1614 !important;
+        }
+        .designs label:has(input:checked) {
+          border-color: #781215 !important;
+          background: #781215 !important;
+          color: #FAF6EE !important;
+        }
+        .designs label span.d-sub {
+          font-size: 0.75rem !important;
+          font-weight: 500 !important;
+          opacity: 0.8 !important;
+        }
+        .designs input {
+          position: absolute !important;
+          opacity: 0 !important;
+          pointer-events: none !important;
+        }
+        @media (max-width: 480px) {
+          .designs {
+            grid-template-columns: 1fr !important;
+          }
+        }
         .buy {
           position: static !important;
           background: #FAF6EE !important;
@@ -70,7 +109,46 @@ function StorePage() {
             grid-template-columns: repeat(3, minmax(0, 1fr)) !important;
             gap: 0.5rem !important;
           }
-          .buy {
+          .designs {
+          display: grid !important;
+          grid-template-columns: 1fr 1fr !important;
+          gap: 0.65rem !important;
+        }
+        .designs label {
+          display: flex !important;
+          flex-direction: column !important;
+          gap: 0.15rem !important;
+          padding: 0.7rem 0.85rem !important;
+          background: #FFFFFF !important;
+          border: 1.5px solid #E2D6C3 !important;
+          border-radius: 8px !important;
+          cursor: pointer !important;
+          transition: all 0.15s ease !important;
+          font-size: 0.875rem !important;
+          font-weight: 600 !important;
+          color: #1E1614 !important;
+        }
+        .designs label:has(input:checked) {
+          border-color: #781215 !important;
+          background: #781215 !important;
+          color: #FAF6EE !important;
+        }
+        .designs label span.d-sub {
+          font-size: 0.75rem !important;
+          font-weight: 500 !important;
+          opacity: 0.8 !important;
+        }
+        .designs input {
+          position: absolute !important;
+          opacity: 0 !important;
+          pointer-events: none !important;
+        }
+        @media (max-width: 480px) {
+          .designs {
+            grid-template-columns: 1fr !important;
+          }
+        }
+        .buy {
             grid-template-columns: 1fr !important;
             gap: 0.75rem !important;
           }
@@ -202,7 +280,46 @@ function StorePage() {
             padding-inline: 1rem !important;
             padding-bottom: 2rem !important;
           }
-          .buy {
+          .designs {
+          display: grid !important;
+          grid-template-columns: 1fr 1fr !important;
+          gap: 0.65rem !important;
+        }
+        .designs label {
+          display: flex !important;
+          flex-direction: column !important;
+          gap: 0.15rem !important;
+          padding: 0.7rem 0.85rem !important;
+          background: #FFFFFF !important;
+          border: 1.5px solid #E2D6C3 !important;
+          border-radius: 8px !important;
+          cursor: pointer !important;
+          transition: all 0.15s ease !important;
+          font-size: 0.875rem !important;
+          font-weight: 600 !important;
+          color: #1E1614 !important;
+        }
+        .designs label:has(input:checked) {
+          border-color: #781215 !important;
+          background: #781215 !important;
+          color: #FAF6EE !important;
+        }
+        .designs label span.d-sub {
+          font-size: 0.75rem !important;
+          font-weight: 500 !important;
+          opacity: 0.8 !important;
+        }
+        .designs input {
+          position: absolute !important;
+          opacity: 0 !important;
+          pointer-events: none !important;
+        }
+        @media (max-width: 480px) {
+          .designs {
+            grid-template-columns: 1fr !important;
+          }
+        }
+        .buy {
             margin: 0.75rem 0 0 !important;
             padding: 1rem 0 !important;
           }
@@ -226,14 +343,16 @@ function StorePage() {
         : detail.colourwayLabel;
 
       const chosenSize = detail.size || "L";
-      const itemPrice = 1499;
+      const isPlain = detail.colourway === "plain";
+      const itemName = isPlain ? "DTU Classic Hoodie (No Stripes)" : "DTU Heritage Hoodie (Varsity)";
 
       addItem({
-        productId: detail.sku || "heritage-1941",
-        name: "DTU Heritage Hoodie",
+        productId: isPlain ? "heritage-plain" : "heritage-1941",
+        name: itemName,
         color: customLabel,
         size: chosenSize,
-        price: itemPrice,
+        price: isPlain ? 1200 : 1499,
+        discountPerUnit: isPlain ? 401 : 300,
       });
 
       // Instantly open the cart drawer so the user immediately sees the added item
@@ -241,14 +360,14 @@ function StorePage() {
 
       // Email notification to merchdtudce@gmail.com
       sendEmailNotification({
-        subject: `🛍️ New Add-to-Cart: DTU Heritage Hoodie (${chosenSize})`,
+        subject: `🛍️ New Add-to-Cart: ${itemName} (${chosenSize})`,
         data: {
           Event: "Add to Cart",
-          Product: "DTU Heritage Hoodie",
+          Product: itemName,
           Size: chosenSize,
           Customization: customLabel,
           Batch: detail.batch || "None",
-          Price: `₹${itemPrice}`,
+          Price: `₹${isPlain ? 799 : 1199}`,
           Alert_For: "merchdtudce@gmail.com",
         },
       });
@@ -285,7 +404,7 @@ function StorePage() {
           price="1499"
           currency="INR"
         />
-        <Script src="/js/dtu-hoodie.js?v=38" strategy="afterInteractive" />
+        <Script src="/js/dtu-hoodie.js?v=39" strategy="afterInteractive" />
       </section>
 
       {/* Heritage / About section */}

@@ -8,6 +8,7 @@ export interface CartItem {
   color: string;
   size: string;
   price: number;
+  discountPerUnit?: number;
   qty: number;
 }
 
@@ -35,7 +36,7 @@ export function CartProvider({ children }: { children: ReactNode }) {
         // Sync unit prices with current catalog MRP (1499) regardless of legacy SKU
         const synced = parsed.map((item) => {
           const match = products.find((p) => p.id === item.productId) || products[0];
-          return match ? { ...item, price: match.price } : item;
+          return match ? { ...item, price: match.price, discountPerUnit: match.discountPerUnit } : item;
         });
         setItems(synced);
       }
@@ -57,15 +58,17 @@ export function CartProvider({ children }: { children: ReactNode }) {
   const key = (p: string, c: string, s: string) => `${p}-${c}-${s}`;
 
   const addItem = useCallback((item: Omit<CartItem, "qty">) => {
-    const catalogPrice = (products.find((p) => p.id === item.productId) || products[0])?.price ?? item.price;
-    const normalizedItem = { ...item, price: catalogPrice };
+    const match = products.find((p) => p.id === item.productId) || products[0];
+    const catalogPrice = match?.price ?? item.price;
+    const discountPerUnit = match?.discountPerUnit ?? item.discountPerUnit ?? 300;
+    const normalizedItem = { ...item, price: catalogPrice, discountPerUnit };
     setItems((prev) => {
       const idx = prev.findIndex(
         (i) => key(i.productId, i.color, i.size) === key(normalizedItem.productId, normalizedItem.color, normalizedItem.size)
       );
       if (idx >= 0) {
         const next = [...prev];
-        next[idx] = { ...next[idx], price: catalogPrice, qty: next[idx].qty + 1 };
+        next[idx] = { ...next[idx], price: catalogPrice, discountPerUnit, qty: next[idx].qty + 1 };
         return next;
       }
       return [...prev, { ...normalizedItem, qty: 1 }];
