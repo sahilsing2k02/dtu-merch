@@ -43,9 +43,9 @@ export default function ReservationForm({ onClose, discountedTotal, discountAmou
     setForm((p) => ({ ...p, [key]: val }));
 
   const handlePhoneChange = (raw: string) => {
-    // Strip non-digits and strip accidental leading 91 only if pasting 12 digits
+    // Strip non-digits and drop accidental pasted +91 prefix so 10 digits remain
     let digits = raw.replace(/\D/g, "");
-    if (digits.length === 12 && digits.startsWith("91")) digits = digits.slice(2);
+    if (digits.length > 10 && digits.startsWith("91")) digits = digits.slice(2);
     set("phone", digits.slice(0, 10));
     if (formError) setFormError("");
   };
@@ -246,7 +246,6 @@ export default function ReservationForm({ onClose, discountedTotal, discountAmou
                   required
                   type="tel"
                   inputMode="numeric"
-                  maxLength={10}
                   minLength={10}
                   pattern="[0-9]{10}"
                   title="Enter exact 10-digit WhatsApp mobile number"
