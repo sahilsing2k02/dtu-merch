@@ -2,7 +2,7 @@
 
 import { useState } from "react";
 import { X, Minus, Plus, Trash2, MessageCircle, ShoppingBag } from "lucide-react";
-import { useCart, getItemAdvancePerUnit } from "@/store/cart-context";
+import { useCart, getItemAdvancePerUnit, getBulkDiscountPerUnit } from "@/store/cart-context";
 import { sendEmailNotification } from "@/utils/notify";
 import ReservationForm from "./reservation-form";
 
@@ -40,7 +40,10 @@ export default function CartDrawer({ open, onClose }: Props) {
   const discountAmount = discountApplied
     ? Math.min(totalPrice, items.reduce((s, i) => s + (i.discountPerUnit ?? 300) * i.qty, 0))
     : 0;
-  const finalPrice = Math.max(0, totalPrice - discountAmount);
+  const afterCouponPrice = Math.max(0, totalPrice - discountAmount);
+  const bulkPerUnit = getBulkDiscountPerUnit(totalItems);
+  const bulkDiscount = Math.min(afterCouponPrice, bulkPerUnit * totalItems);
+  const finalPrice = Math.max(0, afterCouponPrice - bulkDiscount);
   const advancePayable = Math.min(
     finalPrice,
     items.reduce((s, i) => s + getItemAdvancePerUnit(i) * i.qty, 0)
@@ -55,9 +58,10 @@ export default function CartDrawer({ open, onClose }: Props) {
         ).toLocaleString("en-IN")}`
     );
     const couponLine = discountApplied ? `\n🏷️ *Coupon ${appliedCode} applied: -₹${discountAmount.toLocaleString("en-IN")}*` : "";
+    const bulkLine = bulkDiscount > 0 ? `\n🎉 *Bundle Discount (${totalItems} hoodies, -₹${bulkPerUnit}/ea): -₹${bulkDiscount.toLocaleString("en-IN")}*` : "";
     const msg = `🛒 *DTU Merch Order*\n\n${lines.join(
       "\n"
-    )}${couponLine}\n\n*Final Total: ₹${finalPrice.toLocaleString(
+    )}${couponLine}${bulkLine}\n\n*Final Total: ₹${finalPrice.toLocaleString(
       "en-IN"
     )}*\n\nPlease confirm my reservation!`;
     return `https://wa.me/${WHATSAPP_NUM}?text=${encodeURIComponent(msg)}`;
@@ -210,6 +214,12 @@ export default function CartDrawer({ open, onClose }: Props) {
                   <span>-₹{discountAmount.toLocaleString("en-IN")}</span>
                 </div>
               )}
+              {bulkDiscount > 0 && (
+                <div className="flex items-center justify-between text-xs text-emerald-700 font-semibold">
+                  <span>Bundle Discount (₹{bulkPerUnit} off × {totalItems})</span>
+                  <span>-₹{bulkDiscount.toLocaleString("en-IN")}</span>
+                </div>
+              )}
               <div className="flex items-center justify-between pt-1 border-t border-[#E2D6C3]">
                 <span className="text-xs font-bold tracking-[0.16em] uppercase text-[#1E1614]">
                   Total
@@ -249,6 +259,7 @@ export default function CartDrawer({ open, onClose }: Props) {
                   data: {
                     Event: "Order via WhatsApp Clicked",
                     Coupon_Applied: discountApplied ? appliedCode : "None",
+                    Bundle_Discount: bulkDiscount > 0 ? `-₹${bulkDiscount.toLocaleString("en-IN")} (₹${bulkPerUnit}/hoodie)` : "₹0",
                     Items: items.map((i) => `${i.name} (${i.color}, ${i.size}) x${i.qty} - ₹${i.price * i.qty}`).join(" | "),
                     Total_Amount: `₹${finalPrice.toLocaleString("en-IN")}`,
                   },
@@ -267,6 +278,7 @@ export default function CartDrawer({ open, onClose }: Props) {
         <ReservationForm
           discountedTotal={finalPrice}
           discountAmount={discountAmount}
+          bulkDiscount={bulkDiscount}
           appliedCoupon={discountApplied ? appliedCode : undefined}
           onClose={() => {
             setShowForm(false);

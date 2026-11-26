@@ -1,7 +1,7 @@
 "use client";
 
 import { useState } from "react";
-import { ShoppingBag, Menu, X } from "lucide-react";
+import { ShoppingBag, Menu, X, Tag } from "lucide-react";
 import { useCart } from "@/store/cart-context";
 
 interface NavbarProps {
@@ -16,17 +16,32 @@ export default function Navbar({ onCartOpen, onSizeGuideOpen }: NavbarProps) {
   return (
     <header className="sticky top-0 z-40 bg-[#FAF6EE]/90 backdrop-blur-md border-b border-[#E2D6C3]">
       <div className="max-w-7xl mx-auto flex items-center justify-between px-5 md:px-8 h-18">
-        {/* Crest / Logo */}
-        <a href="#" className="flex items-center gap-3 group">
-          <img
-            src="/images/dtu-logo.jpg"
-            alt="DTU Hoodies Logo"
-            className="w-12 h-12 rounded-xl object-cover border border-[#E2D6C3] shadow-xs group-hover:scale-105 transition-transform"
-          />
-          <span className="font-serif text-xl font-extrabold tracking-tight text-[#1E1614]">
-            DTU <span className="text-[#781215]">MERCH</span>
-          </span>
-        </a>
+        {/* Crest / Logo + Top-Left Bulk Offer */}
+        <div className="flex items-center gap-4 min-w-0">
+          <a href="#" className="flex items-center gap-3 group shrink-0">
+            <img
+              src="/images/dtu-logo.jpg"
+              alt="DTU Hoodies Logo"
+              className="w-12 h-12 rounded-xl object-cover border border-[#E2D6C3] shadow-xs group-hover:scale-105 transition-transform"
+            />
+            <span className="font-serif text-xl font-extrabold tracking-tight text-[#1E1614]">
+              DTU <span className="text-[#781215]">MERCH</span>
+            </span>
+          </a>
+
+          <div className="hidden lg:inline-flex items-center gap-2 pl-4 border-l border-[#E2D6C3]">
+            <span className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-white border border-[#E2D6C3] text-[11px] font-medium text-[#1E1614] shadow-2xs whitespace-nowrap">
+              <Tag size={12} className="text-[#781215] shrink-0" />
+              <span>
+                <strong className="text-[#781215]">Buy 3:</strong> ₹50 off/hoodie
+              </span>
+              <span className="text-[#D9C8B2]">•</span>
+              <span>
+                <strong className="text-[#781215]">Buy 4+:</strong> ₹100 off/hoodie
+              </span>
+            </span>
+          </div>
+        </div>
 
         {/* Desktop nav */}
         <nav className="hidden md:flex items-center gap-9 text-xs font-semibold tracking-[0.16em] uppercase text-[#6E5D53]">
@@ -63,6 +78,18 @@ export default function Navbar({ onCartOpen, onSizeGuideOpen }: NavbarProps) {
             {menuOpen ? <X size={20} /> : <Menu size={20} />}
           </button>
         </div>
+      </div>
+
+      {/* Top-left bundle strip for mobile/tablet so header stays uncrowded */}
+      <div className="lg:hidden border-t border-[#E2D6C3]/70 bg-[#FAF6EE]/95 px-5 py-1.5 text-[11px] text-[#1E1614] flex items-center gap-1.5 overflow-x-auto whitespace-nowrap">
+        <Tag size={12} className="text-[#781215] shrink-0" />
+        <span>
+          <strong className="text-[#781215]">Buy 3:</strong> ₹50 off/hoodie
+        </span>
+        <span className="text-[#D9C8B2]">•</span>
+        <span>
+          <strong className="text-[#781215]">Buy 4+:</strong> ₹100 off/hoodie
+        </span>
       </div>
 
       {/* Mobile drawer */}

@@ -10,10 +10,17 @@ interface Props {
   onClose: () => void;
   discountedTotal?: number;
   discountAmount?: number;
+  bulkDiscount?: number;
   appliedCoupon?: string;
 }
 
-export default function ReservationForm({ onClose, discountedTotal, discountAmount = 0, appliedCoupon }: Props) {
+export default function ReservationForm({
+  onClose,
+  discountedTotal,
+  discountAmount = 0,
+  bulkDiscount = 0,
+  appliedCoupon,
+}: Props) {
   const { items, totalPrice, clearCart } = useCart();
   const effectiveTotal = typeof discountedTotal === "number" ? discountedTotal : totalPrice;
   const rawAdvance = items.reduce(
@@ -77,6 +84,7 @@ export default function ReservationForm({ onClose, discountedTotal, discountAmou
         Coupon_Applied: appliedCoupon || "None",
         Subtotal: `₹${totalPrice.toLocaleString("en-IN")}`,
         Discount: discountAmount > 0 ? `-₹${discountAmount.toLocaleString("en-IN")}` : "₹0",
+        Bundle_Discount: bulkDiscount > 0 ? `-₹${bulkDiscount.toLocaleString("en-IN")}` : "₹0",
         Items_Ordered: items.map((i) => `${i.name} (${i.color}, ${i.size}) x${i.qty} - ₹${i.price * i.qty}`).join(" | "),
         Total_Amount: `₹${effectiveTotal.toLocaleString("en-IN")}`,
         Advance_Paid_Now: `₹${advancePayable.toLocaleString("en-IN")}`,
@@ -322,7 +330,14 @@ export default function ReservationForm({ onClose, discountedTotal, discountAmou
               })}
               <p className="font-semibold text-[#1E1614] pt-1.5 border-t border-[#E2D6C3] flex items-center justify-between">
                 <span>Order Total:</span>
-                <span>₹{effectiveTotal.toLocaleString("en-IN")}{appliedCoupon && <span className="text-xs text-emerald-700 ml-1.5 font-normal">({appliedCoupon} applied)</span>}</span>
+                <span>
+                  ₹{effectiveTotal.toLocaleString("en-IN")}
+                  {(appliedCoupon || bulkDiscount > 0) && (
+                    <span className="text-xs text-emerald-700 ml-1.5 font-normal">
+                      ({[appliedCoupon, bulkDiscount > 0 ? `Bundle -₹${bulkDiscount}` : null].filter(Boolean).join(" + ")})
+                    </span>
+                  )}
+                </span>
               </p>
               <p className="font-extrabold text-[#781215] flex items-center justify-between text-sm">
                 <span>Amount Payable Now (UPI Advance):</span>

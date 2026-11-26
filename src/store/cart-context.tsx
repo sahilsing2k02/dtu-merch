@@ -14,6 +14,12 @@ export interface CartItem {
   qty: number;
 }
 
+export function getBulkDiscountPerUnit(totalItems: number): number {
+  if (totalItems >= 4) return 100;
+  if (totalItems === 3) return 50;
+  return 0;
+}
+
 export function getItemAdvancePerUnit(item: {
   productId: string;
   name: string;
