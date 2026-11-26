@@ -68,9 +68,9 @@ export const products: HoodieProduct[] = [
     name: "DTU '41 Classic Hoodie (No Stripes)",
     subtitle:
       "Minimalist off-white 400 GSM fleece without sleeve stripes, varsity chest typography & DelTech back seal",
-    price: 1200,
-    originalPrice: 1200,
-    discountPerUnit: 401,
+    price: 1099,
+    originalPrice: 1099,
+    discountPerUnit: 300,
     specs: ["400 GSM FLEECE", "CLEAN SLEEVES", "PUFF & CREST PRINT"],
     image: "/images/dtu-cream-hoodie.jpg",
     colors: [
