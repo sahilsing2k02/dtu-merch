@@ -20,6 +20,33 @@ export function getBulkDiscountPerUnit(totalItems: number): number {
   return 0;
 }
 
+export function calculateCheckoutTotals(items: CartItem[], isCouponApplied: boolean) {
+  const totalItems = items.reduce((s, i) => s + i.qty, 0);
+  const subtotal = items.reduce((s, i) => s + i.price * i.qty, 0);
+  const couponDiscount = isCouponApplied
+    ? Math.min(subtotal, items.reduce((s, i) => s + (i.discountPerUnit ?? 300) * i.qty, 0))
+    : 0;
+  const afterCoupon = Math.max(0, subtotal - couponDiscount);
+  const bulkPerUnit = getBulkDiscountPerUnit(totalItems);
+  const bulkDiscount = Math.min(afterCoupon, bulkPerUnit * totalItems);
+  const finalTotal = Math.max(0, afterCoupon - bulkDiscount);
+  const advancePayable = Math.min(
+    finalTotal,
+    items.reduce((s, i) => s + getItemAdvancePerUnit(i) * i.qty, 0)
+  );
+  const balanceAmount = Math.max(0, finalTotal - advancePayable);
+  return {
+    totalItems,
+    subtotal,
+    couponDiscount,
+    bulkPerUnit,
+    bulkDiscount,
+    finalTotal,
+    advancePayable,
+    balanceAmount,
+  };
+}
+
 export function getItemAdvancePerUnit(item: {
   productId: string;
   name: string;

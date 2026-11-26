@@ -1,34 +1,50 @@
 "use client";
 
 import { useState, type FormEvent } from "react";
-import { X, CheckCircle, MessageCircle } from "lucide-react";
-import { useCart, getItemAdvancePerUnit } from "@/store/cart-context";
-import { PICKUP_POINTS } from "@/data/products";
+import { X, CheckCircle, MessageCircle, Minus, Plus } from "lucide-react";
+import { useCart, getItemAdvancePerUnit, calculateCheckoutTotals } from "@/store/cart-context";
+import { HOODIE_DESIGNS, PICKUP_POINTS } from "@/data/products";
 import { sendEmailNotification } from "@/utils/notify";
 
 interface Props {
   onClose: () => void;
-  discountedTotal?: number;
-  discountAmount?: number;
-  bulkDiscount?: number;
   appliedCoupon?: string;
 }
 
-export default function ReservationForm({
-  onClose,
-  discountedTotal,
-  discountAmount = 0,
-  bulkDiscount = 0,
-  appliedCoupon,
-}: Props) {
-  const { items, totalPrice, clearCart } = useCart();
-  const effectiveTotal = typeof discountedTotal === "number" ? discountedTotal : totalPrice;
-  const rawAdvance = items.reduce(
-    (sum, item) => sum + getItemAdvancePerUnit(item) * item.qty,
-    0
-  );
-  const advancePayable = Math.min(effectiveTotal, rawAdvance);
-  const balanceAmount = Math.max(0, effectiveTotal - advancePayable);
+export default function ReservationForm({ onClose, appliedCoupon }: Props) {
+  const { items, updateQty, clearCart } = useCart();
+  const {
+    totalItems,
+    subtotal,
+    couponDiscount,
+    bulkPerUnit,
+    bulkDiscount,
+    finalTotal: effectiveTotal,
+    advancePayable,
+    balanceAmount,
+  } = calculateCheckoutTotals(items, !!appliedCoupon);
+
+  // Compute jersey / hoodie counts grouped by each product edition
+  const productCounts = HOODIE_DESIGNS.map((design) => ({
+    id: design.id,
+    title: design.title,
+    tag: design.editionTag,
+    qty: items
+      .filter((i) => i.productId === design.id || i.name.toLowerCase() === design.title.toLowerCase())
+      .reduce((s, i) => s + i.qty, 0),
+  }));
+  const matchedIds = new Set(productCounts.map((p) => p.id));
+  const matchedNames = new Set(productCounts.map((p) => p.title.toLowerCase()));
+  const extraQty = items
+    .filter((i) => !matchedIds.has(i.productId) && !matchedNames.has(i.name.toLowerCase()))
+    .reduce((s, i) => s + i.qty, 0);
+  if (extraQty > 0) {
+    productCounts.push({ id: "other", title: "Other Edition", tag: "Custom", qty: extraQty });
+  }
+  const productSummaryLabel = productCounts
+    .filter((p) => p.qty > 0)
+    .map((p) => `${p.title}: ${p.qty}`)
+    .join(", ");
 
   const [submitted, setSubmitted] = useState(false);
   const [submitting, setSubmitting] = useState(false);
@@ -50,7 +66,6 @@ export default function ReservationForm({
     setForm((p) => ({ ...p, [key]: val }));
 
   const handlePhoneChange = (raw: string) => {
-    // Strip non-digits and drop accidental pasted +91 prefix so 10 digits remain
     let digits = raw.replace(/\D/g, "");
     if (digits.length > 10 && digits.startsWith("91")) digits = digits.slice(2);
     set("phone", digits.slice(0, 10));
@@ -60,6 +75,11 @@ export default function ReservationForm({
   const handleSubmit = async (e: FormEvent) => {
     e.preventDefault();
     setFormError("");
+
+    if (items.length === 0 || totalItems === 0) {
+      setFormError("Your bag is empty. Add at least one hoodie before confirming.");
+      return;
+    }
 
     if (!/^\d{10}$/.test(form.phone)) {
       setFormError("Please enter an exact 10-digit WhatsApp number after +91.");
@@ -72,7 +92,7 @@ export default function ReservationForm({
 
     const fullPhone = `+91 ${form.phone}`;
     const ok = await sendEmailNotification({
-      subject: `🎉 New Paid Order ${id} by ${form.name} (UTR: ${form.utr})`,
+      subject: `🎉 New Paid Order ${id} by ${form.name} (${totalItems} hoodies • UTR: ${form.utr})`,
       data: {
         Event: "Campus Pick-up Reservation",
         Reservation_ID: id,
@@ -81,10 +101,12 @@ export default function ReservationForm({
         DTU_Roll_Number: form.rollNo,
         Branch_and_Year: form.branch,
         Pickup_Point: form.pickup,
+        Total_Hoodies_Jerseys: totalItems,
+        Jerseys_By_Product: productSummaryLabel || `${totalItems}`,
         Coupon_Applied: appliedCoupon || "None",
-        Subtotal: `₹${totalPrice.toLocaleString("en-IN")}`,
-        Discount: discountAmount > 0 ? `-₹${discountAmount.toLocaleString("en-IN")}` : "₹0",
-        Bundle_Discount: bulkDiscount > 0 ? `-₹${bulkDiscount.toLocaleString("en-IN")}` : "₹0",
+        Subtotal_MRP: `₹${subtotal.toLocaleString("en-IN")}`,
+        Coupon_Discount: couponDiscount > 0 ? `-₹${couponDiscount.toLocaleString("en-IN")}` : "₹0",
+        Bundle_Discount: bulkDiscount > 0 ? `-₹${bulkDiscount.toLocaleString("en-IN")} (₹${bulkPerUnit} off × ${totalItems})` : "₹0",
         Items_Ordered: items.map((i) => `${i.name} (${i.color}, ${i.size}) x${i.qty} - ₹${i.price * i.qty}`).join(" | "),
         Total_Amount: `₹${effectiveTotal.toLocaleString("en-IN")}`,
         Advance_Paid_Now: `₹${advancePayable.toLocaleString("en-IN")}`,
@@ -172,6 +194,9 @@ export default function ReservationForm({
             </div>
 
             <div className="text-left bg-[#FAF6EE] border border-[#E2D6C3] rounded-2xl p-4 mb-4 text-sm space-y-1.5">
+              <p className="text-xs font-bold text-[#781215] uppercase tracking-[0.12em]">
+                {totalItems} {totalItems === 1 ? "Hoodie / Jersey" : "Hoodies / Jerseys"} ({productSummaryLabel})
+              </p>
               {items.map((i) => (
                 <p
                   key={`${i.productId}-${i.color}-${i.size}`}
@@ -181,9 +206,21 @@ export default function ReservationForm({
                   <strong>₹{(i.price * i.qty).toLocaleString("en-IN")}</strong>
                 </p>
               ))}
+              {couponDiscount > 0 && (
+                <p className="flex items-center justify-between text-xs text-emerald-700 font-semibold">
+                  <span>Coupon Discount ({appliedCoupon}):</span>
+                  <span>-₹{couponDiscount.toLocaleString("en-IN")}</span>
+                </p>
+              )}
+              {bulkDiscount > 0 && (
+                <p className="flex items-center justify-between text-xs text-emerald-700 font-semibold">
+                  <span>Bundle Discount (₹{bulkPerUnit} off × {totalItems}):</span>
+                  <span>-₹{bulkDiscount.toLocaleString("en-IN")}</span>
+                </p>
+              )}
               <p className="font-extrabold text-[#781215] pt-2 border-t border-[#E2D6C3] flex items-center justify-between">
                 <span>Total Amount:</span>
-                <span>₹{effectiveTotal.toLocaleString("en-IN")}{appliedCoupon && <span className="text-xs text-emerald-700 ml-2 font-normal">({appliedCoupon} applied)</span>}</span>
+                <span>₹{effectiveTotal.toLocaleString("en-IN")}</span>
               </p>
               <p className="font-bold text-[#1E1614] flex items-center justify-between text-xs pt-1">
                 <span>{balanceAmount > 0 ? "Advance Payable (UPI):" : "Advance Payable (Full):"}</span>
@@ -313,40 +350,111 @@ export default function ReservationForm({
               </select>
             </div>
 
-            {/* Summary & UPI Advance QR */}
-            <div className="bg-[#FAF6EE] border border-[#E2D6C3] rounded-2xl p-4 text-xs space-y-1.5 text-[#6E5D53]">
+            {/* Number of Jerseys / Hoodies Based on Products */}
+            <div className="bg-white border border-[#E2D6C3] rounded-2xl p-4 space-y-2.5">
+              <div className="flex items-center justify-between gap-2">
+                <p className="text-[11px] font-bold text-[#781215] tracking-[0.14em] uppercase">
+                  Number of Jerseys by Product
+                </p>
+                <span className="px-2.5 py-0.5 rounded-full bg-[#FAF6EE] border border-[#E2D6C3] text-[11px] font-bold text-[#1E1614]">
+                  Total: {totalItems}
+                </span>
+              </div>
+              <div className="grid grid-cols-2 gap-2">
+                {productCounts.map((p) => (
+                  <div
+                    key={p.id}
+                    className="rounded-xl bg-[#FAF6EE] border border-[#E2D6C3] px-3 py-2 flex items-center justify-between gap-2"
+                  >
+                    <div className="min-w-0">
+                      <p className="text-xs font-bold text-[#1E1614] truncate">{p.title}</p>
+                      <p className="text-[10px] text-[#6E5D53] truncate">{p.tag}</p>
+                    </div>
+                    <span className="font-serif text-lg font-extrabold text-[#781215] shrink-0">
+                      {p.qty}
+                    </span>
+                  </div>
+                ))}
+              </div>
+              <p className="text-[11px] font-medium text-[#6E5D53]">
+                {totalItems >= 4
+                  ? `✓ Buy 4+ Bundle Active: ₹100 off per hoodie (-₹${bulkDiscount.toLocaleString("en-IN")} total)`
+                  : totalItems === 3
+                  ? `✓ Buy 3 Bundle Active: ₹50 off per hoodie (-₹${bulkDiscount.toLocaleString("en-IN")} total) • Add 1 more for ₹100 off each`
+                  : `Bundle offer: Buy 3 for ₹50 off/hoodie • Buy 4+ for ₹100 off/hoodie`}
+              </p>
+            </div>
+
+            {/* Summary & Live Quantity Adjuster */}
+            <div className="bg-[#FAF6EE] border border-[#E2D6C3] rounded-2xl p-4 text-xs space-y-2 text-[#6E5D53]">
               {items.map((i) => {
                 const itemAdv = getItemAdvancePerUnit(i) * i.qty;
                 return (
-                  <p key={`${i.productId}-${i.color}-${i.size}`} className="flex items-center justify-between gap-2">
-                    <span>
-                      {i.name} ({i.color}, {i.size}) × {i.qty}
-                    </span>
-                    <span className="font-semibold text-[#1E1614] shrink-0">
-                      Adv. ₹{itemAdv.toLocaleString("en-IN")}
-                    </span>
-                  </p>
+                  <div
+                    key={`${i.productId}-${i.color}-${i.size}`}
+                    className="flex items-center justify-between gap-2"
+                  >
+                    <div className="min-w-0 flex-1">
+                      <p className="text-[#1E1614] font-medium truncate">
+                        {i.name} ({i.color}, {i.size})
+                      </p>
+                      <p className="text-[11px] text-[#6E5D53]">
+                        ₹{i.price.toLocaleString("en-IN")} × {i.qty} · Adv. ₹{itemAdv.toLocaleString("en-IN")}
+                      </p>
+                    </div>
+                    <div className="flex items-center border border-[#E2D6C3] rounded-full bg-white shrink-0">
+                      <button
+                        type="button"
+                        onClick={() => updateQty(i.productId, i.color, i.size, i.qty - 1)}
+                        className="p-1.5 hover:text-[#781215] transition-colors cursor-pointer"
+                        aria-label={`Decrease quantity for ${i.name}`}
+                      >
+                        <Minus size={11} />
+                      </button>
+                      <span className="px-2 text-xs font-bold text-[#1E1614]">{i.qty}</span>
+                      <button
+                        type="button"
+                        onClick={() => updateQty(i.productId, i.color, i.size, i.qty + 1)}
+                        className="p-1.5 hover:text-[#781215] transition-colors cursor-pointer"
+                        aria-label={`Increase quantity for ${i.name}`}
+                      >
+                        <Plus size={11} />
+                      </button>
+                    </div>
+                  </div>
                 );
               })}
-              <p className="font-semibold text-[#1E1614] pt-1.5 border-t border-[#E2D6C3] flex items-center justify-between">
-                <span>Order Total:</span>
-                <span>
-                  ₹{effectiveTotal.toLocaleString("en-IN")}
-                  {(appliedCoupon || bulkDiscount > 0) && (
-                    <span className="text-xs text-emerald-700 ml-1.5 font-normal">
-                      ({[appliedCoupon, bulkDiscount > 0 ? `Bundle -₹${bulkDiscount}` : null].filter(Boolean).join(" + ")})
-                    </span>
-                  )}
-                </span>
-              </p>
-              <p className="font-extrabold text-[#781215] flex items-center justify-between text-sm">
-                <span>Amount Payable Now (UPI Advance):</span>
-                <span>₹{advancePayable.toLocaleString("en-IN")}</span>
-              </p>
-              <p className="font-bold text-[#1E1614] flex items-center justify-between">
-                <span>Balance Due on Collection:</span>
-                <span>₹{balanceAmount.toLocaleString("en-IN")}</span>
-              </p>
+
+              <div className="pt-2 border-t border-[#E2D6C3] space-y-1">
+                <p className="flex items-center justify-between">
+                  <span>Subtotal (MRP):</span>
+                  <span className="font-medium text-[#1E1614]">₹{subtotal.toLocaleString("en-IN")}</span>
+                </p>
+                {couponDiscount > 0 && (
+                  <p className="flex items-center justify-between text-emerald-700 font-semibold">
+                    <span>Coupon Discount ({appliedCoupon}):</span>
+                    <span>-₹{couponDiscount.toLocaleString("en-IN")}</span>
+                  </p>
+                )}
+                {bulkDiscount > 0 && (
+                  <p className="flex items-center justify-between text-emerald-700 font-semibold">
+                    <span>Bundle Discount (₹{bulkPerUnit} off × {totalItems}):</span>
+                    <span>-₹{bulkDiscount.toLocaleString("en-IN")}</span>
+                  </p>
+                )}
+                <p className="font-semibold text-[#1E1614] pt-1 border-t border-[#E2D6C3]/70 flex items-center justify-between">
+                  <span>Order Total:</span>
+                  <span>₹{effectiveTotal.toLocaleString("en-IN")}</span>
+                </p>
+                <p className="font-extrabold text-[#781215] flex items-center justify-between text-sm">
+                  <span>Amount Payable Now (UPI Advance):</span>
+                  <span>₹{advancePayable.toLocaleString("en-IN")}</span>
+                </p>
+                <p className="font-bold text-[#1E1614] flex items-center justify-between">
+                  <span>Balance Due on Collection:</span>
+                  <span>₹{balanceAmount.toLocaleString("en-IN")}</span>
+                </p>
+              </div>
             </div>
 
             <div className="bg-white border border-[#E2D6C3] rounded-2xl p-4 text-center space-y-2">
@@ -432,7 +540,7 @@ export default function ReservationForm({
 
             <button
               type="submit"
-              disabled={submitting}
+              disabled={submitting || totalItems === 0}
               className="w-full py-3.5 rounded-full bg-[#781215] text-[#FAF6EE] font-bold text-xs tracking-[0.18em] uppercase hover:bg-[#5E0D10] disabled:opacity-65 transition-colors cursor-pointer shadow-md shadow-[#781215]/15"
             >
               {submitting
