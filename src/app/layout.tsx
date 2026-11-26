@@ -22,7 +22,7 @@ export const metadata: Metadata = {
     "400 GSM heavyweight off-white & oxblood varsity collegiate hoodies. Minimo from ₹799 • Classico from ₹1,099 • Buy 3 save ₹50/hoodie, more than 3 save ₹100/hoodie.",
   openGraph: {
     type: "website",
-    url: "https://dtu-merch.vercel.app",
+    url: "https://dtu-merch.vercel.app/",
     siteName: "DTU Merch",
     title: "DTU Merch — The DTU Heritage Hoodie",
     description:
