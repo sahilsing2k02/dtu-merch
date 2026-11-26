@@ -29,10 +29,10 @@ export const metadata: Metadata = {
       "400 GSM DTU Varsity & Minimalist Hoodies. Minimo from ₹799 • Classico from ₹1,099 with DTU33. Buy 3 get ₹50/ea off • More than 3 get ₹100/ea off.",
     images: [
       {
-        url: "/images/dtu-cream-hoodie.jpg",
+        url: "/images/dtu-share-hoodie.jpg",
         width: 1024,
-        height: 682,
-        alt: "DTU '41 Varsity Stripe Heritage Hoodie",
+        height: 605,
+        alt: "DTU Merch Classico Varsity Stripe Hoodie",
       },
     ],
   },
@@ -41,7 +41,7 @@ export const metadata: Metadata = {
     title: "DTU Merch — The DTU Heritage Hoodie",
     description:
       "400 GSM DTU Varsity & Minimalist Hoodies. Minimo from ₹799 • Classico from ₹1,099. Campus pick-up at AB4.",
-    images: ["/images/dtu-cream-hoodie.jpg"],
+    images: ["/images/dtu-share-hoodie.jpg"],
   },
   icons: {
     icon: "/images/dtu-logo.jpg",
