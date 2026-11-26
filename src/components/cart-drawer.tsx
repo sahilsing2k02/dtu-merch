@@ -219,8 +219,8 @@ export default function CartDrawer({ open, onClose }: Props) {
               ) : (
                 <p className="text-[11px] text-[#781215] font-medium">
                   {totalItems === 2
-                    ? "Add 1 more hoodie to unlock ₹50 off per hoodie (4+ gets ₹100 off each)!"
-                    : "Bundle tip: Buy 3 for ₹50 off/hoodie • Buy 4+ for ₹100 off/hoodie"}
+                    ? "Add 1 more hoodie to unlock ₹50 off per hoodie (more than 3 gets ₹100 off each)!"
+                    : "Bundle tip: Buy 3 for ₹50 off/hoodie • More than 3 for ₹100 off/hoodie"}
                 </p>
               )}
               <div className="flex items-center justify-between pt-1 border-t border-[#E2D6C3]">

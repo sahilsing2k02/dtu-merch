@@ -37,7 +37,7 @@ export default function Navbar({ onCartOpen, onSizeGuideOpen }: NavbarProps) {
               </span>
               <span className="text-[#D9C8B2]">•</span>
               <span>
-                <strong className="text-[#781215] font-bold">Buy 4+:</strong> ₹100 off/hoodie
+                <strong className="text-[#781215] font-bold">More than 3:</strong> ₹100 off/hoodie
               </span>
             </span>
           </div>
@@ -88,7 +88,7 @@ export default function Navbar({ onCartOpen, onSizeGuideOpen }: NavbarProps) {
         </span>
         <span className="text-[#D9C8B2]">•</span>
         <span>
-          <strong className="text-[#781215] font-bold">Buy 4+:</strong> ₹100 off/hoodie
+          <strong className="text-[#781215] font-bold">More than 3:</strong> ₹100 off/hoodie
         </span>
       </div>
 

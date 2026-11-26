@@ -378,10 +378,10 @@ export default function ReservationForm({ onClose, appliedCoupon }: Props) {
               </div>
               <p className="text-[11px] font-medium text-[#6E5D53]">
                 {totalItems >= 4
-                  ? `✓ Buy 4+ Bundle Active: ₹100 off per hoodie (-₹${bulkDiscount.toLocaleString("en-IN")} total)`
+                  ? `✓ More than 3 Bundle Active: ₹100 off per hoodie (-₹${bulkDiscount.toLocaleString("en-IN")} total)`
                   : totalItems === 3
                   ? `✓ Buy 3 Bundle Active: ₹50 off per hoodie (-₹${bulkDiscount.toLocaleString("en-IN")} total) • Add 1 more for ₹100 off each`
-                  : `Bundle offer: Buy 3 for ₹50 off/hoodie • Buy 4+ for ₹100 off/hoodie`}
+                  : `Bundle offer: Buy 3 for ₹50 off/hoodie • More than 3 for ₹100 off/hoodie`}
               </p>
             </div>
 

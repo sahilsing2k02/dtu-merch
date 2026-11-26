@@ -19,14 +19,14 @@ export const metadata: Metadata = {
   metadataBase: new URL("https://dtu-merch.vercel.app"),
   title: "DTU Merch — Official Collegiate Hoodie",
   description:
-    "400 GSM heavyweight off-white & oxblood varsity collegiate hoodies. Minimo from ₹799 • Classico from ₹1,099 • Buy 3 save ₹50/hoodie, Buy 4+ save ₹100/hoodie.",
+    "400 GSM heavyweight off-white & oxblood varsity collegiate hoodies. Minimo from ₹799 • Classico from ₹1,099 • Buy 3 save ₹50/hoodie, more than 3 save ₹100/hoodie.",
   openGraph: {
     type: "website",
     url: "https://dtu-merch.vercel.app",
     siteName: "DTU Merch",
     title: "DTU Merch — The DTU Heritage Hoodie",
     description:
-      "400 GSM DTU Varsity & Minimalist Hoodies. Minimo from ₹799 • Classico from ₹1,099 with DTU33. Buy 3 get ₹50/ea off • Buy 4+ get ₹100/ea off.",
+      "400 GSM DTU Varsity & Minimalist Hoodies. Minimo from ₹799 • Classico from ₹1,099 with DTU33. Buy 3 get ₹50/ea off • More than 3 get ₹100/ea off.",
     images: [
       {
         url: "/images/dtu-cream-hoodie.jpg",
