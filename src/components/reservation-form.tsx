@@ -1,37 +1,10 @@
 "use client";
 
-import { useState, type ChangeEvent, type FormEvent } from "react";
-import { X, CheckCircle, MessageCircle, Upload, Trash2 } from "lucide-react";
+import { useState, type FormEvent } from "react";
+import { X, CheckCircle, MessageCircle } from "lucide-react";
 import { useCart, getItemAdvancePerUnit } from "@/store/cart-context";
 import { PICKUP_POINTS } from "@/data/products";
 import { sendEmailNotification } from "@/utils/notify";
-
-/** Compress uploaded payment screenshot so it reliably fits API/email attachment limits */
-async function compressScreenshot(file: File): Promise<string> {
-  const dataUrl = await new Promise<string>((resolve, reject) => {
-    const reader = new FileReader();
-    reader.onload = () => resolve(String(reader.result));
-    reader.onerror = () => reject(new Error("Could not read file"));
-    reader.readAsDataURL(file);
-  });
-
-  const img = await new Promise<HTMLImageElement>((resolve, reject) => {
-    const el = new Image();
-    el.onload = () => resolve(el);
-    el.onerror = () => reject(new Error("Invalid image"));
-    el.src = dataUrl;
-  });
-
-  const maxSide = 960;
-  const scale = Math.min(1, maxSide / Math.max(img.width, img.height));
-  const canvas = document.createElement("canvas");
-  canvas.width = Math.max(1, Math.round(img.width * scale));
-  canvas.height = Math.max(1, Math.round(img.height * scale));
-  const ctx = canvas.getContext("2d");
-  if (!ctx) return dataUrl;
-  ctx.drawImage(img, 0, 0, canvas.width, canvas.height);
-  return canvas.toDataURL("image/jpeg", 0.78);
-}
 
 interface Props {
   onClose: () => void;
@@ -49,12 +22,11 @@ export default function ReservationForm({ onClose, discountedTotal, discountAmou
   );
   const advancePayable = Math.min(effectiveTotal, rawAdvance);
   const balanceAmount = Math.max(0, effectiveTotal - advancePayable);
+
   const [submitted, setSubmitted] = useState(false);
   const [submitting, setSubmitting] = useState(false);
   const [reservationId, setReservationId] = useState("");
-  const [screenshotName, setScreenshotName] = useState("");
-  const [screenshotPreview, setScreenshotPreview] = useState("");
-  const [uploadError, setUploadError] = useState("");
+  const [formError, setFormError] = useState("");
 
   const [form, setForm] = useState({
     name: "",
@@ -70,43 +42,35 @@ export default function ReservationForm({ onClose, discountedTotal, discountAmou
   const set = (key: string, val: string) =>
     setForm((p) => ({ ...p, [key]: val }));
 
-  const handleFileChange = async (e: ChangeEvent<HTMLInputElement>) => {
-    const file = e.target.files?.[0];
-    setUploadError("");
-    if (!file) return;
-    if (!file.type.startsWith("image/")) {
-      setUploadError("Please upload an image file (PNG, JPG, WebP).");
-      return;
-    }
-    try {
-      const compressed = await compressScreenshot(file);
-      setScreenshotPreview(compressed);
-      setScreenshotName(file.name);
-    } catch {
-      setUploadError("Could not process screenshot. Please try another image.");
-    }
+  const handlePhoneChange = (raw: string) => {
+    // Strip non-digits and strip accidental leading 91 only if pasting 12 digits
+    let digits = raw.replace(/\D/g, "");
+    if (digits.length === 12 && digits.startsWith("91")) digits = digits.slice(2);
+    set("phone", digits.slice(0, 10));
+    if (formError) setFormError("");
   };
 
   const handleSubmit = async (e: FormEvent) => {
     e.preventDefault();
-    if (!screenshotPreview) {
-      setUploadError("Please upload your UPI payment screenshot before confirming.");
+    setFormError("");
+
+    if (!/^\d{10}$/.test(form.phone)) {
+      setFormError("Please enter an exact 10-digit WhatsApp number after +91.");
       return;
     }
+
     setSubmitting(true);
     const id = `DTU-${Math.floor(1000 + Math.random() * 9000)}`;
     setReservationId(id);
 
-    // Send all order + payment details + screenshot to merchdtudce@gmail.com (Web3Forms / server fallback)
-    await sendEmailNotification({
+    const fullPhone = `+91 ${form.phone}`;
+    const ok = await sendEmailNotification({
       subject: `🎉 New Paid Order ${id} by ${form.name} (UTR: ${form.utr})`,
-      attachmentDataUrl: screenshotPreview,
-      attachmentName: screenshotName || `${id}-payment.jpg`,
       data: {
-        Event: "Campus Pickup Reservation + Payment Submitted",
+        Event: "Campus Pick-up Reservation",
         Reservation_ID: id,
         Student_Name: form.name,
-        WhatsApp_Phone: form.phone,
+        WhatsApp_Phone: fullPhone,
         DTU_Roll_Number: form.rollNo,
         Branch_and_Year: form.branch,
         Pickup_Point: form.pickup,
@@ -120,13 +84,16 @@ export default function ReservationForm({ onClose, discountedTotal, discountAmou
         UPI_Transaction_ID_UTR: form.utr,
         Payment_App: form.upiApp,
         Payer_Name_Or_UPI_ID: form.payerUpiId || "Not specified",
-        Payment_Screenshot_File: screenshotName || `${id}-payment.jpg`,
         Payment_Method: `₹${advancePayable.toLocaleString("en-IN")} UPI Advance (agrawalharshit324@oksbi) + ₹${balanceAmount.toLocaleString("en-IN")} Balance on Pick-up`,
         Target_Email: "merchdtudce@gmail.com",
       },
     });
 
     setSubmitting(false);
+    if (!ok) {
+      setFormError("Could not submit reservation right now. Please check your internet and try again.");
+      return;
+    }
     setSubmitted(true);
   };
 
@@ -174,6 +141,10 @@ export default function ReservationForm({ onClose, discountedTotal, discountAmou
                 <strong className="text-[#1E1614]">{form.name}</strong>
               </p>
               <p>
+                <span className="text-[#6E5D53]">WhatsApp:</span>{" "}
+                <strong className="text-[#1E1614]">+91 {form.phone}</strong>
+              </p>
+              <p>
                 <span className="text-[#6E5D53]">Roll No:</span>{" "}
                 <strong className="text-[#1E1614]">{form.rollNo}</strong>
               </p>
@@ -190,18 +161,6 @@ export default function ReservationForm({ onClose, discountedTotal, discountAmou
                 <strong className="text-[#1E1614]">{form.utr}</strong>{" "}
                 <span className="text-xs text-[#6E5D53]">({form.upiApp})</span>
               </p>
-              {screenshotPreview && (
-                <div className="pt-2 flex items-center gap-3">
-                  <img
-                    src={screenshotPreview}
-                    alt="Uploaded payment proof"
-                    className="w-12 h-12 rounded-lg object-cover border border-[#E2D6C3]"
-                  />
-                  <span className="text-xs text-emerald-700 font-semibold">
-                    Payment screenshot attached ({screenshotName})
-                  </span>
-                </div>
-              )}
             </div>
 
             <div className="text-left bg-[#FAF6EE] border border-[#E2D6C3] rounded-2xl p-4 mb-4 text-sm space-y-1.5">
@@ -276,14 +235,30 @@ export default function ReservationForm({ onClose, discountedTotal, discountAmou
               <label className="text-[11px] font-bold text-[#6E5D53] tracking-[0.14em] uppercase block mb-1.5">
                 WhatsApp Phone Number *
               </label>
-              <input
-                required
-                type="tel"
-                value={form.phone}
-                onChange={(e) => set("phone", e.target.value)}
-                className={inputClass}
-                placeholder="+91 98765 43210"
-              />
+              <div className="flex items-stretch gap-2">
+                <span
+                  aria-label="Country code +91"
+                  className="inline-flex items-center px-3.5 bg-[#EFE6D8] border border-[#E2D6C3] rounded-xl text-sm font-bold text-[#1E1614] select-none shrink-0"
+                >
+                  +91
+                </span>
+                <input
+                  required
+                  type="tel"
+                  inputMode="numeric"
+                  maxLength={10}
+                  minLength={10}
+                  pattern="[0-9]{10}"
+                  title="Enter exact 10-digit WhatsApp mobile number"
+                  value={form.phone}
+                  onChange={(e) => handlePhoneChange(e.target.value)}
+                  className={inputClass}
+                  placeholder="9876543210"
+                />
+              </div>
+              <p className="text-[11px] text-[#6E5D53] mt-1">
+                +91 is fixed — enter your 10-digit WhatsApp number ({form.phone.length}/10 digits)
+              </p>
             </div>
 
             <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
@@ -380,14 +355,14 @@ export default function ReservationForm({ onClose, discountedTotal, discountAmou
               </a>
             </div>
 
-            {/* Payment Verification Details & Screenshot Upload */}
+            {/* Payment Verification Details */}
             <div className="bg-[#FAF6EE] border border-[#E2D6C3] rounded-2xl p-4 space-y-3">
               <div>
                 <p className="text-[11px] font-bold text-[#781215] tracking-[0.14em] uppercase">
-                  Payment Details &amp; Screenshot *
+                  Payment Details *
                 </p>
                 <p className="text-[11px] text-[#6E5D53] mt-0.5">
-                  After paying ₹{advancePayable.toLocaleString("en-IN")}, enter your transaction details and upload the screenshot.
+                  After paying ₹{advancePayable.toLocaleString("en-IN")}, enter your UPI transaction details below to confirm.
                 </p>
               </div>
 
@@ -433,64 +408,13 @@ export default function ReservationForm({ onClose, discountedTotal, discountAmou
                   placeholder="e.g. rahul@okaxis or Account Holder Name"
                 />
               </div>
-
-              <div>
-                <label className="text-[11px] font-bold text-[#6E5D53] tracking-[0.14em] uppercase block mb-1.5">
-                  Payment Screenshot *
-                </label>
-                {screenshotPreview ? (
-                  <div className="flex items-center justify-between gap-3 bg-white border border-[#E2D6C3] rounded-xl p-2.5">
-                    <div className="flex items-center gap-3 min-w-0">
-                      <img
-                        src={screenshotPreview}
-                        alt="Payment screenshot preview"
-                        className="w-14 h-14 rounded-lg object-cover border border-[#E2D6C3] shrink-0"
-                      />
-                      <div className="min-w-0">
-                        <p className="text-xs font-semibold text-[#1E1614] truncate">
-                          {screenshotName}
-                        </p>
-                        <p className="text-[11px] text-emerald-700 font-medium">
-                          Ready to submit
-                        </p>
-                      </div>
-                    </div>
-                    <button
-                      type="button"
-                      onClick={() => {
-                        setScreenshotPreview("");
-                        setScreenshotName("");
-                      }}
-                      className="p-2 text-[#6E5D53] hover:text-[#781215] transition-colors cursor-pointer shrink-0"
-                      aria-label="Remove screenshot"
-                    >
-                      <Trash2 size={16} />
-                    </button>
-                  </div>
-                ) : (
-                  <label className="flex flex-col items-center justify-center gap-1.5 bg-white hover:bg-[#FAF6EE]/60 border-2 border-dashed border-[#D9C8B2] hover:border-[#781215] rounded-xl py-5 px-4 text-center cursor-pointer transition-colors">
-                    <Upload size={20} className="text-[#781215]" />
-                    <span className="text-xs font-semibold text-[#1E1614]">
-                      Click to upload payment screenshot
-                    </span>
-                    <span className="text-[11px] text-[#6E5D53]">
-                      PNG, JPG or WebP (auto-compressed)
-                    </span>
-                    <input
-                      type="file"
-                      accept="image/*"
-                      onChange={handleFileChange}
-                      className="sr-only"
-                    />
-                  </label>
-                )}
-                {uploadError && (
-                  <p className="text-xs font-semibold text-[#781215] mt-1.5">
-                    {uploadError}
-                  </p>
-                )}
-              </div>
             </div>
+
+            {formError && (
+              <p className="text-xs font-semibold text-[#781215] bg-[#781215]/10 border border-[#781215]/25 rounded-xl px-3.5 py-2.5">
+                {formError}
+              </p>
+            )}
 
             <button
               type="submit"
@@ -498,7 +422,7 @@ export default function ReservationForm({ onClose, discountedTotal, discountAmou
               className="w-full py-3.5 rounded-full bg-[#781215] text-[#FAF6EE] font-bold text-xs tracking-[0.18em] uppercase hover:bg-[#5E0D10] disabled:opacity-65 transition-colors cursor-pointer shadow-md shadow-[#781215]/15"
             >
               {submitting
-                ? "Submitting Order..."
+                ? "Submitting Reservation..."
                 : `Confirm Reservation (Paid ₹${advancePayable.toLocaleString("en-IN")})`}
             </button>
           </form>
