@@ -5,7 +5,7 @@ import Image from "next/image";
 import { ChevronLeft, ChevronRight, Rotate3d, X, ZoomIn } from "lucide-react";
 import type { HoodieDesignSpec } from "@/data/products";
 import { useCart } from "@/store/cart-context";
-import { sendEmailNotification } from "@/utils/notify";
+
 
 interface DtuAddToCartDetail {
   sku: string;
@@ -407,7 +407,6 @@ export default function HoodieShowcaseCard({
       const hasCustomName = trimmedName.length > 0;
       const nameExtra = hasCustomName ? 100 : 0;
       const mrpPrice = design.mrp + nameExtra;
-      const salePrice = design.salePrice + nameExtra;
       const advancePerUnit = design.baseAdvance + nameExtra;
 
       addItem({
@@ -422,20 +421,6 @@ export default function HoodieShowcaseCard({
       });
 
       onItemAdded();
-
-      sendEmailNotification({
-        subject: `🛍️ New Add-to-Cart: ${design.title} (${chosenSize})`,
-        data: {
-          Event: "Add to Cart",
-          Product: design.title,
-          Edition: design.editionNumber,
-          Size: chosenSize,
-          Customization: customLabel,
-          Batch: detail.batch || "None",
-          Price: `₹${salePrice}`,
-          Alert_For: "merchdtudce@gmail.com",
-        },
-      });
     };
 
     el?.addEventListener("dtu:add-to-cart", handleAddToCart);
