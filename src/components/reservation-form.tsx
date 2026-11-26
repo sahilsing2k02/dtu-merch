@@ -14,8 +14,10 @@ interface Props {
 }
 
 export default function ReservationForm({ onClose, discountedTotal, discountAmount = 0, appliedCoupon }: Props) {
-  const { items, totalPrice, clearCart } = useCart();
+  const { items, totalItems, totalPrice, clearCart } = useCart();
   const effectiveTotal = typeof discountedTotal === "number" ? discountedTotal : totalPrice;
+  const advancePayable = Math.min(effectiveTotal, totalItems * 850);
+  const balanceAmount = Math.max(0, effectiveTotal - advancePayable);
   const [submitted, setSubmitted] = useState(false);
   const [reservationId, setReservationId] = useState("");
 
@@ -52,7 +54,9 @@ export default function ReservationForm({ onClose, discountedTotal, discountAmou
         Discount: discountAmount > 0 ? `-₹${discountAmount.toLocaleString("en-IN")}` : "₹0",
         Items_Ordered: items.map((i) => `${i.name} (${i.color}, ${i.size}) x${i.qty} - ₹${i.price * i.qty}`).join(" | "),
         Total_Amount: `₹${effectiveTotal.toLocaleString("en-IN")}`,
-        Payment_Method: "Pay on Campus Pickup (Cash/UPI)",
+        Advance_Payable_Now: `₹${advancePayable.toLocaleString("en-IN")} (₹850 x ${totalItems})`,
+        Balance_On_Collection: `₹${balanceAmount.toLocaleString("en-IN")}`,
+        Payment_Method: "₹850/hoodie UPI Advance (agrawalharshit324@oksbi) + Balance on Pick-up",
         Target_Email: "merchdtudce@gmail.com",
       },
     });
@@ -129,13 +133,22 @@ export default function ReservationForm({ onClose, discountedTotal, discountAmou
                 <span>Total Amount:</span>
                 <span>₹{effectiveTotal.toLocaleString("en-IN")}{appliedCoupon && <span className="text-xs text-emerald-700 ml-2 font-normal">({appliedCoupon} applied)</span>}</span>
               </p>
+              <p className="font-bold text-[#1E1614] flex items-center justify-between text-xs pt-1">
+                <span>Advance Payable (₹850 × {totalItems}):</span>
+                <span>₹{advancePayable.toLocaleString("en-IN")}</span>
+              </p>
+              <p className="font-bold text-[#6E5D53] flex items-center justify-between text-xs">
+                <span>Balance on Collection:</span>
+                <span>₹{balanceAmount.toLocaleString("en-IN")}</span>
+              </p>
             </div>
 
             <div className="bg-[#781215]/8 border border-[#781215]/25 rounded-2xl p-3.5 text-xs text-[#6E5D53] mb-4">
               <strong className="text-[#781215]">Pick-up Instructions:</strong>{" "}
               Bring your DTU Student ID card to{" "}
-              <strong className="text-[#1E1614]">{form.pickup}</strong>. Pay via
-              UPI or Cash on collection.
+              <strong className="text-[#1E1614]">{form.pickup}</strong>. Pay the remaining{" "}
+              <strong className="text-[#1E1614]">₹{balanceAmount.toLocaleString("en-IN")}</strong>{" "}
+              via UPI or Cash on collection.
             </div>
 
             <a
@@ -158,8 +171,7 @@ export default function ReservationForm({ onClose, discountedTotal, discountAmou
         ) : (
           <form onSubmit={handleSubmit} className="p-6 space-y-4">
             <p className="text-xs text-[#6E5D53] leading-relaxed">
-              Campus pick-up only. No online payment required — pay via UPI or
-              Cash on collection.
+              Pay <strong className="text-[#781215]">₹850 per hoodie</strong> advance via UPI to reserve your piece. Pay the remaining balance on campus collection.
             </p>
 
             <div>
@@ -234,24 +246,52 @@ export default function ReservationForm({ onClose, discountedTotal, discountAmou
               </select>
             </div>
 
-            {/* Summary */}
-            <div className="bg-[#FAF6EE] border border-[#E2D6C3] rounded-2xl p-3.5 text-xs space-y-1 text-[#6E5D53]">
+            {/* Summary & UPI Advance QR */}
+            <div className="bg-[#FAF6EE] border border-[#E2D6C3] rounded-2xl p-4 text-xs space-y-1.5 text-[#6E5D53]">
               {items.map((i) => (
                 <p key={`${i.productId}-${i.color}-${i.size}`}>
                   {i.name} ({i.size}) × {i.qty}
                 </p>
               ))}
-              <p className="font-extrabold text-[#1E1614] pt-1.5 border-t border-[#E2D6C3] flex items-center justify-between">
-                <span>Total:</span>
+              <p className="font-semibold text-[#1E1614] pt-1.5 border-t border-[#E2D6C3] flex items-center justify-between">
+                <span>Order Total:</span>
                 <span>₹{effectiveTotal.toLocaleString("en-IN")}{appliedCoupon && <span className="text-xs text-emerald-700 ml-1.5 font-normal">({appliedCoupon} applied)</span>}</span>
               </p>
+              <p className="font-extrabold text-[#781215] flex items-center justify-between text-sm">
+                <span>Amount Payable Now (₹850 × {totalItems}):</span>
+                <span>₹{advancePayable.toLocaleString("en-IN")}</span>
+              </p>
+              <p className="font-bold text-[#1E1614] flex items-center justify-between">
+                <span>Balance After Delivery / Collection:</span>
+                <span>₹{balanceAmount.toLocaleString("en-IN")}</span>
+              </p>
+            </div>
+
+            <div className="bg-white border border-[#E2D6C3] rounded-2xl p-4 text-center space-y-2">
+              <p className="text-[11px] font-bold text-[#781215] tracking-[0.14em] uppercase">
+                Scan QR to Pay ₹{advancePayable.toLocaleString("en-IN")} Advance
+              </p>
+              <img
+                src="/images/upi-qr.jpg"
+                alt="UPI Payment QR Code - Harshit Agrawal"
+                className="w-48 mx-auto rounded-xl border border-[#E2D6C3] shadow-xs"
+              />
+              <p className="text-[11px] text-[#6E5D53]">
+                UPI ID: <strong className="text-[#1E1614] select-all">agrawalharshit324@oksbi</strong>
+              </p>
+              <a
+                href={`upi://pay?pa=agrawalharshit324@oksbi&pn=Harshit%20Agrawal&am=${advancePayable}&cu=INR`}
+                className="inline-block text-[11px] font-bold text-[#781215] underline hover:text-[#5E0D10]"
+              >
+                Open UPI App to Pay ₹{advancePayable.toLocaleString("en-IN")}
+              </a>
             </div>
 
             <button
               type="submit"
               className="w-full py-3.5 rounded-full bg-[#781215] text-[#FAF6EE] font-bold text-xs tracking-[0.18em] uppercase hover:bg-[#5E0D10] transition-colors cursor-pointer shadow-md shadow-[#781215]/15"
             >
-              Confirm Reservation (Pay on Pick-up)
+              Confirm Reservation (Paid ₹{advancePayable.toLocaleString("en-IN")})
             </button>
           </form>
         )}

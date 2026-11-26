@@ -214,7 +214,7 @@ export default function CartDrawer({ open, onClose }: Props) {
             </div>
 
             <p className="text-[10px] text-[#6E5D53] tracking-[0.14em] uppercase">
-              Pay on campus pick-up • No online payment required
+              ₹850/hoodie advance to reserve • Balance on campus pick-up
             </p>
 
             <button
