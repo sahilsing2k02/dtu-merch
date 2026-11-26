@@ -14,7 +14,7 @@ export default function SizeGuideModal({ onClose }: Props) {
         className="fixed inset-0 z-[60] bg-[#1E1614]/60 backdrop-blur-xs animate-fade-in"
         onClick={onClose}
       />
-      <div className="fixed z-[60] inset-x-4 top-1/2 -translate-y-1/2 max-w-md mx-auto bg-[#FAF6EE] border border-[#E2D6C3] rounded-3xl p-6 shadow-2xl animate-scale-up">
+      <div className="fixed z-[60] inset-x-4 top-1/2 -translate-y-1/2 max-w-md mx-auto bg-[#FAF6EE] border border-[#E2D6C3] rounded-3xl p-5 sm:p-6 shadow-2xl animate-scale-up">
         <div className="flex items-center justify-between mb-4">
           <div>
             <p className="text-[10px] font-bold tracking-[0.22em] uppercase text-[#781215]">
@@ -38,7 +38,7 @@ export default function SizeGuideModal({ onClose }: Props) {
           an ultra-relaxed drape.
         </p>
 
-        <div className="bg-white rounded-2xl border border-[#E2D6C3] overflow-hidden">
+        <div className="bg-white rounded-2xl border border-[#E2D6C3] overflow-x-auto">
           <table className="w-full text-sm">
             <thead>
               <tr className="border-b border-[#E2D6C3] bg-[#F3ECE0] text-[#781215] text-[11px] tracking-[0.16em] uppercase">

@@ -216,7 +216,7 @@ export default function CartDrawer({ open, onClose }: Props) {
             </div>
 
             <p className="text-[10px] text-[#6E5D53] tracking-[0.14em] uppercase">
-              ₹850/hoodie advance to reserve • Balance on campus pick-up
+              Up to ₹850/hoodie advance to reserve • Balance on campus pick-up
             </p>
 
             <button

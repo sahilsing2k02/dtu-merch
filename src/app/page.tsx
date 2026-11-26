@@ -53,6 +53,7 @@ function StorePage() {
           gap: 0.65rem !important;
         }
         .designs label {
+          position: relative !important;
           display: flex !important;
           flex-direction: column !important;
           gap: 0.15rem !important;
@@ -100,8 +101,23 @@ function StorePage() {
         @media (min-width: 821px) {
           .panel {
             align-self: center !important;
-            padding-block: 1.5rem !important;
+            padding-block: 1rem !important;
             max-width: 34rem !important;
+          }
+          h2 {
+            font-size: clamp(2rem, 3.1vw, 2.85rem) !important;
+            line-height: 1.05 !important;
+          }
+          .lede {
+            font-size: 0.98rem !important;
+            margin-top: 0.45rem !important;
+          }
+          .chapter {
+            gap: 0.85rem !important;
+            padding-block: 0.5rem 0.75rem !important;
+          }
+          .dtu-highlights {
+            margin-top: 0.75rem !important;
           }
         }
         @media (max-width: 480px) {
@@ -201,6 +217,10 @@ function StorePage() {
           max-width: none !important;
           box-sizing: border-box !important;
         }
+        .put-name-card .fields {
+          max-width: none !important;
+          width: 100% !important;
+        }
         .put-name-card .field {
           min-width: 0 !important;
         }
@@ -234,8 +254,12 @@ function StorePage() {
             padding: 1rem 1rem 0.75rem !important;
           }
           .stage {
-            height: 22rem !important;
+            height: clamp(20rem, 52vw, 26rem) !important;
             min-height: 19rem !important;
+          }
+          .sizes {
+            grid-template-columns: repeat(3, minmax(0, 1fr)) !important;
+            gap: 0.5rem !important;
           }
           .panel {
             padding-inline: 1rem !important;
@@ -318,7 +342,7 @@ function StorePage() {
       <HeroSection />
 
       {/* 360° Interactive 3D Hoodie Section */}
-      <section id="collection">
+      <section id="collection" className="scroll-mt-20">
         <dtu-hoodie
           ref={(node) => {
             hoodieRef.current = node;
@@ -326,11 +350,11 @@ function StorePage() {
           price="1499"
           currency="INR"
         />
-        <Script src="/js/dtu-hoodie.js?v=40" strategy="afterInteractive" />
+        <Script src="/js/dtu-hoodie.js?v=41" strategy="afterInteractive" />
       </section>
 
       {/* Heritage / About section */}
-      <section id="about" className="border-t border-[#E2D6C3]">
+      <section id="about" className="scroll-mt-20 border-t border-[#E2D6C3]">
         <div className="max-w-7xl mx-auto px-5 md:px-8 py-20 grid md:grid-cols-2 gap-12 items-center">
           <div>
             <p className="text-[11px] tracking-[0.28em] text-[#781215] font-bold uppercase mb-2">

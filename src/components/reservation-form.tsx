@@ -54,7 +54,7 @@ export default function ReservationForm({ onClose, discountedTotal, discountAmou
         Discount: discountAmount > 0 ? `-₹${discountAmount.toLocaleString("en-IN")}` : "₹0",
         Items_Ordered: items.map((i) => `${i.name} (${i.color}, ${i.size}) x${i.qty} - ₹${i.price * i.qty}`).join(" | "),
         Total_Amount: `₹${effectiveTotal.toLocaleString("en-IN")}`,
-        Advance_Payable_Now: `₹${advancePayable.toLocaleString("en-IN")} (₹850 x ${totalItems})`,
+        Advance_Payable_Now: `₹${advancePayable.toLocaleString("en-IN")}`,
         Balance_On_Collection: `₹${balanceAmount.toLocaleString("en-IN")}`,
         Payment_Method: "₹850/hoodie UPI Advance (agrawalharshit324@oksbi) + Balance on Pick-up",
         Target_Email: "merchdtudce@gmail.com",
@@ -134,7 +134,7 @@ export default function ReservationForm({ onClose, discountedTotal, discountAmou
                 <span>₹{effectiveTotal.toLocaleString("en-IN")}{appliedCoupon && <span className="text-xs text-emerald-700 ml-2 font-normal">({appliedCoupon} applied)</span>}</span>
               </p>
               <p className="font-bold text-[#1E1614] flex items-center justify-between text-xs pt-1">
-                <span>Advance Payable (₹850 × {totalItems}):</span>
+                <span>{balanceAmount > 0 ? `Advance Payable (₹850 × ${totalItems}):` : "Advance Payable (Full):"}</span>
                 <span>₹{advancePayable.toLocaleString("en-IN")}</span>
               </p>
               <p className="font-bold text-[#6E5D53] flex items-center justify-between text-xs">
@@ -201,7 +201,7 @@ export default function ReservationForm({ onClose, discountedTotal, discountAmou
               />
             </div>
 
-            <div className="grid grid-cols-2 gap-3">
+            <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
               <div>
                 <label className="text-[11px] font-bold text-[#6E5D53] tracking-[0.14em] uppercase block mb-1.5">
                   DTU Roll No. *
@@ -258,7 +258,7 @@ export default function ReservationForm({ onClose, discountedTotal, discountAmou
                 <span>₹{effectiveTotal.toLocaleString("en-IN")}{appliedCoupon && <span className="text-xs text-emerald-700 ml-1.5 font-normal">({appliedCoupon} applied)</span>}</span>
               </p>
               <p className="font-extrabold text-[#781215] flex items-center justify-between text-sm">
-                <span>Amount Payable Now (₹850 × {totalItems}):</span>
+                <span>{balanceAmount > 0 ? `Amount Payable Now (₹850 × ${totalItems}):` : "Amount Payable Now:"}</span>
                 <span>₹{advancePayable.toLocaleString("en-IN")}</span>
               </p>
               <p className="font-bold text-[#1E1614] flex items-center justify-between">
