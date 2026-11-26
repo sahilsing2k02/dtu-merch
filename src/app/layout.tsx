@@ -30,6 +30,8 @@ export const metadata: Metadata = {
     images: [
       {
         url: "/images/dtu-share-hoodie.jpg",
+        secureUrl: "https://dtu-merch.vercel.app/images/dtu-share-hoodie.jpg",
+        type: "image/jpeg",
         width: 1024,
         height: 605,
         alt: "DTU Merch Classico Varsity Stripe Hoodie",
@@ -41,7 +43,12 @@ export const metadata: Metadata = {
     title: "DTU Merch — The DTU Heritage Hoodie",
     description:
       "400 GSM DTU Varsity & Minimalist Hoodies. Minimo from ₹799 • Classico from ₹1,099. Campus pick-up at AB4.",
-    images: ["/images/dtu-share-hoodie.jpg"],
+    images: [
+      {
+        url: "/images/dtu-share-hoodie.jpg",
+        alt: "DTU Merch Classico Varsity Stripe Hoodie",
+      },
+    ],
   },
   icons: {
     icon: "/images/dtu-logo.jpg",
