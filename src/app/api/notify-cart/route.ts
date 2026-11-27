@@ -1,6 +1,7 @@
 import { NextResponse } from "next/server";
 import { Resend } from "resend";
 import nodemailer from "nodemailer";
+import { appendToGoogleSheet, sheetPayloadFromNotifyFields } from "@/utils/sheets";
 
 const TARGET_EMAIL = "merchdtudce@gmail.com";
 
@@ -91,6 +92,18 @@ export async function POST(req: Request) {
 
     const providers: string[] = [];
     const errors: string[] = [];
+    let sheetsSynced = false;
+
+    if (fields.Event === "Campus Pick-up Reservation" && !data._skipSheets) {
+      try {
+        const sheetRes = await appendToGoogleSheet(sheetPayloadFromNotifyFields(fields));
+        sheetsSynced = sheetRes.configured;
+      } catch (err) {
+        const msg = `sheets: ${err instanceof Error ? err.message : String(err)}`;
+        console.error("[Notify Sheets fallback error]", msg);
+        errors.push(msg);
+      }
+    }
 
     const web3Key = (process.env.WEB3FORMS_ACCESS_KEY || process.env.NEXT_PUBLIC_WEB3FORMS_KEY || "").trim();
     if (web3Key && !data._skipWeb3Forms) {
@@ -150,8 +163,8 @@ export async function POST(req: Request) {
       }
     }
 
-    if (providers.length > 0) {
-      return NextResponse.json({ success: true, providers });
+    if (providers.length > 0 || sheetsSynced) {
+      return NextResponse.json({ success: true, providers, sheetsSynced });
     }
 
     console.error("[Notify] No provider succeeded:", errors.length ? errors : ["No WEB3FORMS_ACCESS_KEY / RESEND_API_KEY / GMAIL_APP_PASSWORD configured"]);

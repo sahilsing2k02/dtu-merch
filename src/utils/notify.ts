@@ -2,6 +2,7 @@
 
 export interface NotificationPayload {
   subject: string;
+  skipSheets?: boolean;
   data: Record<string, string | number | null | undefined>;
 }
 
@@ -51,6 +52,7 @@ export async function sendEmailNotification(payload: NotificationPayload): Promi
       body: JSON.stringify({
         _subject: payload.subject,
         _skipWeb3Forms: sentViaClientWeb3,
+        _skipSheets: Boolean(payload.skipSheets),
         ...fields,
       }),
     });
