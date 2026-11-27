@@ -106,33 +106,95 @@ export default function ReservationForm({ onClose, appliedCoupon }: Props) {
     setReservationId(id);
 
     const fullPhone = `+91 ${form.phone}`;
-    const ok = await sendEmailNotification({
-      subject: `🎉 New Paid Order ${id} by ${cleanName} (${totalItems} hoodies • UTR: ${cleanUtr})`,
-      data: {
-        Event: "Campus Pick-up Reservation",
-        Reservation_ID: id,
-        Student_Name: cleanName,
-        WhatsApp_Phone: fullPhone,
-        DTU_Roll_Number: cleanRollNo,
-        Branch_and_Year: cleanBranch,
-        Pickup_Point: form.pickup,
-        Total_Hoodies_Jerseys: totalItems,
-        Jerseys_By_Product: productSummaryLabel || `${totalItems}`,
-        Coupon_Applied: appliedCoupon || "None",
-        Subtotal_MRP: `₹${subtotal.toLocaleString("en-IN")}`,
-        Coupon_Discount: couponDiscount > 0 ? `-₹${couponDiscount.toLocaleString("en-IN")}` : "₹0",
-        Bundle_Discount: bulkDiscount > 0 ? `-₹${bulkDiscount.toLocaleString("en-IN")} (₹${bulkPerUnit} off × ${totalItems})` : "₹0",
-        Items_Ordered: items.map((i) => `${i.name} (${i.color}, ${i.size}) x${i.qty} - ₹${i.price * i.qty}`).join(" | "),
-        Total_Amount: `₹${effectiveTotal.toLocaleString("en-IN")}`,
-        Advance_Paid_Now: `₹${advancePayable.toLocaleString("en-IN")}`,
-        Balance_On_Collection: `₹${balanceAmount.toLocaleString("en-IN")}`,
-        UPI_Transaction_ID_UTR: cleanUtr,
-        Payment_App: form.upiApp,
-        Payer_Name_Or_UPI_ID: form.payerUpiId.trim() || "Not specified",
-        Payment_Method: `₹${advancePayable.toLocaleString("en-IN")} UPI Advance (agrawalharshit324@oksbi) + ₹${balanceAmount.toLocaleString("en-IN")} Balance on Pick-up`,
-        Target_Email: "merchdtudce@gmail.com",
-      },
+    const timestampIst = new Date().toLocaleString("en-IN", {
+      timeZone: "Asia/Kolkata",
+      dateStyle: "medium",
+      timeStyle: "short",
     });
+
+    const uniqueTypes = Array.from(
+      new Set(
+        items.map((i) => {
+          const low = `${i.productId} ${i.name}`.toLowerCase();
+          if (low.includes("minimo") || low.includes("design-2") || low.includes("plain")) return "Minimo";
+          if (low.includes("classico") || low.includes("1941")) return "Classico";
+          return i.name;
+        })
+      )
+    );
+    const hoodieTypeLabel = uniqueTypes.join(" + ") || productSummaryLabel || "Hoodie";
+
+    const itemCustomParts = items.map((i) => {
+      const hasCustom =
+        typeof i.customName === "string"
+          ? i.customName.trim().length > 0
+          : i.color.includes("•") && !i.color.endsWith("• Standard");
+      const customText = hasCustom
+        ? i.color.replace(/^(Minimo|Classico)\s*•\s*/i, "").trim()
+        : "No customization";
+      return `${i.name} (${i.size} × ${i.qty}): ${hasCustom ? `Yes — ${customText}` : "No customization"}`;
+    });
+    const anyCustomization = items.some((i) =>
+      typeof i.customName === "string"
+        ? i.customName.trim().length > 0
+        : i.color.includes("•") && !i.color.endsWith("• Standard")
+    );
+
+    const [ok] = await Promise.all([
+      sendEmailNotification({
+        subject: `🎉 New Paid Order ${id} by ${cleanName} (${totalItems} hoodies • UTR: ${cleanUtr})`,
+        data: {
+          Event: "Campus Pick-up Reservation",
+          Reservation_ID: id,
+          Student_Name: cleanName,
+          WhatsApp_Phone: fullPhone,
+          DTU_Roll_Number: cleanRollNo,
+          Branch_and_Year: cleanBranch,
+          Pickup_Point: form.pickup,
+          Total_Hoodies_Jerseys: totalItems,
+          Jerseys_By_Product: productSummaryLabel || `${totalItems}`,
+          Coupon_Applied: appliedCoupon || "None",
+          Subtotal_MRP: `₹${subtotal.toLocaleString("en-IN")}`,
+          Coupon_Discount: couponDiscount > 0 ? `-₹${couponDiscount.toLocaleString("en-IN")}` : "₹0",
+          Bundle_Discount: bulkDiscount > 0 ? `-₹${bulkDiscount.toLocaleString("en-IN")} (₹${bulkPerUnit} off × ${totalItems})` : "₹0",
+          Items_Ordered: items.map((i) => `${i.name} (${i.color}, ${i.size}) x${i.qty} - ₹${i.price * i.qty}`).join(" | "),
+          Total_Amount: `₹${effectiveTotal.toLocaleString("en-IN")}`,
+          Advance_Paid_Now: `₹${advancePayable.toLocaleString("en-IN")}`,
+          Balance_On_Collection: `₹${balanceAmount.toLocaleString("en-IN")}`,
+          UPI_Transaction_ID_UTR: cleanUtr,
+          Payment_App: form.upiApp,
+          Payer_Name_Or_UPI_ID: form.payerUpiId.trim() || "Not specified",
+          Payment_Method: `₹${advancePayable.toLocaleString("en-IN")} UPI Advance (agrawalharshit324@oksbi) + ₹${balanceAmount.toLocaleString("en-IN")} Balance on Pick-up`,
+          Target_Email: "merchdtudce@gmail.com",
+        },
+      }),
+      fetch("/api/sheets", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          reservationId: id,
+          customerName: cleanName,
+          whatsappNumber: form.phone,
+          advanceAmount: advancePayable,
+          utr: cleanUtr,
+          hoodieType: hoodieTypeLabel,
+          hasCustomization: anyCustomization,
+          customizationDetails: itemCustomParts.join(" | "),
+          balanceAmount,
+          orderSummary: `${totalItems} total (${productSummaryLabel || items.map((i) => `${i.name}: ${i.qty}`).join(", ")}) • ₹${effectiveTotal.toLocaleString("en-IN")}`,
+          rollNoAndBranch: `${cleanRollNo} • ${cleanBranch}`,
+          upiAppAndPayer: form.payerUpiId.trim()
+            ? `${form.upiApp} (${form.payerUpiId.trim()})`
+            : form.upiApp,
+          totalAmount: effectiveTotal,
+          pickupPoint: form.pickup,
+          timestampIst,
+        }),
+      }).catch((err) => {
+        console.warn("[Sheets] Request error:", err);
+        return null;
+      }),
+    ]);
 
     setSubmitting(false);
     if (!ok) {
